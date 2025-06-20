@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentics System - Home</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background-color: #0a0a0a;
+            color: #ffffff;
+        }
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(255, 0, 255, 0.1));
+        }
+        h1 {
+            margin: 0;
+            font-size: 3em;
+            background: linear-gradient(45deg, #00ffff, #ff00ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            color: #888;
+            margin-top: 10px;
+        }
+        .options {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+        .option-button {
+            display: inline-block;
+            margin: 10px;
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #00ffff;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .option-button:hover {
+            background: rgba(0, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.3);
+        }
+        .iframe-container {
+            width: 90%;
+            max-width: 1400px;
+            margin: 40px auto;
+            height: 800px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            display: none;
+            box-shadow: 0 10px 50px rgba(0, 255, 255, 0.1);
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .info-section {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+            text-align: center;
+            color: #888;
+        }
+        code {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Agentics System</h1>
+        <p class="subtitle">Elite AI Agent Management Platform</p>
+    </div>
+
+    <div class="options">
+        <h2>View Options:</h2>
+        <a href="agentics-tier50-roster.html" class="option-button">Open Full Page</a>
+        <button onclick="showEmbedded()" class="option-button">Show Embedded Below</button>
+        <button onclick="testAPI()" class="option-button">Test API</button>
+    </div>
+
+    <div id="iframe-container" class="iframe-container">
+        <iframe id="roster-frame" src="agentics-tier50-roster.html" title="Agentics Roster"></iframe>
+    </div>
+
+    <div class="info-section">
+        <h3>Integration Example:</h3>
+        <p>To embed the roster in your own page, use:</p>
+        <code>&lt;iframe src="agentics-tier50-roster.html" width="100%" height="800"&gt;&lt;/iframe&gt;</code>
+    </div>
+
+    <script>
+        function showEmbedded() {
+            const container = document.getElementById('iframe-container');
+            container.style.display = container.style.display === 'block' ? 'none' : 'block';
+            
+            // Listen for events from the roster
+            window.addEventListener('message', function(e) {
+                if (e.data && e.data.type === 'agentSelected') {
+                    console.log('Agent selected:', e.data.agent);
+                    alert('Agent Selected: ' + e.data.agent.name);
+                }
+            });
+        }
+
+        function testAPI() {
+            // Test if the API is available when viewing the full page
+            if (window.AgenticsAPI) {
+                const agents = window.AgenticsAPI.getAllAgents();
+                alert(`API Test Success!\n\nTotal Agents: ${agents.length}\nFirst Agent: ${agents[0].name}`);
+            } else {
+                alert('API Test: Please open the roster in full page mode to access the API.');
+            }
+        }
+
+        // Log to console when page loads
+        console.log('Agentics System Loaded');
+        console.log('Available actions: showEmbedded(), testAPI()');
+    </script>
+</body>
+</html>
