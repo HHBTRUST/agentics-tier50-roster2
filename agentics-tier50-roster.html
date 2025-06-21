@@ -1,2 +1,674 @@
-<!-- Placeholder for the Agentics Tier-50 Roster HTML -->
-<!-- Add the production-ready HTML here -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Agentics Tier-50 Roster - Elite AI Agent Hierarchy Display">
+    <meta name="author" content="Agentics Systems">
+    <meta name="version" content="1.0.0">
+    <meta name="last-modified" content="2025-01-19">
+    
+    <title>Agentics Tier-50 Roster - System Display</title>
+    
+    <!-- Preload critical resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    
+    <style>
+        /* 
+         * Agentics Tier-50 Roster Styles
+         * Version: 1.0.0
+         * Last Modified: 2025-01-19
+         * 
+         * Naming Convention: BEM with 'ag-' prefix
+         * All classes prefixed to prevent conflicts
+         */
+        
+        /* CSS Reset and Variables */
+        .agentics-roster {
+            /* Color Palette - Easy to customize */
+            --ag-bg-primary: #0a0a0a;
+            --ag-bg-secondary: rgba(255, 255, 255, 0.03);
+            --ag-bg-hover: rgba(255, 255, 255, 0.05);
+            
+            --ag-text-primary: #ffffff;
+            --ag-text-secondary: #888888;
+            
+            --ag-accent-cyan: #00ffff;
+            --ag-accent-magenta: #ff00ff;
+            --ag-accent-blue: #0080ff;
+            
+            --ag-border-primary: rgba(255, 255, 255, 0.1);
+            --ag-border-secondary: rgba(255, 255, 255, 0.05);
+            
+            /* Layout Variables */
+            --ag-container-max-width: 1400px;
+            --ag-grid-gap: 30px;
+            --ag-card-padding: 25px;
+            --ag-card-radius: 20px;
+            
+            /* Animation Durations */
+            --ag-transition-fast: 0.2s;
+            --ag-transition-normal: 0.3s;
+            --ag-animation-glow: 2s;
+            --ag-animation-float: 20s;
+            
+            /* Z-index Scale */
+            --ag-z-particles: 1;
+            --ag-z-content: 10;
+            --ag-z-hover: 20;
+        }
+
+        /* Reset styles for embedded context */
+        .agentics-roster *,
+        .agentics-roster *::before,
+        .agentics-roster *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Main Container */
+        .agentics-roster {
+            background: var(--ag-bg-primary);
+            color: var(--ag-text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            min-height: 100vh;
+            width: 100%;
+            position: relative;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Background Container */
+        .ag-poster-container {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(255, 0, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(0, 100, 255, 0.05) 0%, transparent 70%),
+                var(--ag-bg-primary);
+            padding: 40px 20px;
+        }
+
+        /* Particle System */
+        .ag-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: var(--ag-z-particles);
+        }
+
+        .ag-particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(0, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: agFloat var(--ag-animation-float) infinite linear;
+            will-change: transform;
+        }
+
+        @keyframes agFloat {
+            from {
+                transform: translateY(100vh) translateX(0);
+            }
+            to {
+                transform: translateY(-10vh) translateX(100px);
+            }
+        }
+
+        /* Header Section */
+        .ag-header {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+            z-index: var(--ag-z-content);
+        }
+
+        .ag-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--ag-accent-cyan), var(--ag-accent-magenta), var(--ag-accent-blue));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            margin-bottom: 0.5rem;
+            animation: agGlow var(--ag-animation-glow) ease-in-out infinite alternate;
+        }
+
+        @keyframes agGlow {
+            from {
+                filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.5)) 
+                        drop-shadow(0 0 40px rgba(0, 255, 255, 0.3));
+            }
+            to {
+                filter: drop-shadow(0 0 30px rgba(255, 0, 255, 0.5)) 
+                        drop-shadow(0 0 50px rgba(255, 0, 255, 0.3));
+            }
+        }
+
+        .ag-subtitle {
+            font-size: 1.2rem;
+            color: var(--ag-text-secondary);
+            letter-spacing: 0.125em;
+        }
+
+        /* Grid Layout */
+        .ag-roster-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
+            gap: var(--ag-grid-gap);
+            max-width: var(--ag-container-max-width);
+            margin: 0 auto;
+            position: relative;
+            z-index: var(--ag-z-content);
+        }
+
+        /* Department Cards */
+        .ag-department {
+            background: var(--ag-bg-secondary);
+            border: 1px solid var(--ag-border-primary);
+            border-radius: var(--ag-card-radius);
+            padding: var(--ag-card-padding);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all var(--ag-transition-normal) ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        /* Hover Border Effect */
+        .ag-department::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(45deg, transparent, rgba(0, 255, 255, 0.3), transparent);
+            border-radius: var(--ag-card-radius);
+            opacity: 0;
+            transition: opacity var(--ag-transition-normal) ease;
+            z-index: -1;
+        }
+
+        .ag-department:hover,
+        .ag-department:focus-within {
+            transform: translateY(-5px);
+            background: var(--ag-bg-hover);
+            box-shadow: 0 10px 40px rgba(0, 255, 255, 0.2);
+        }
+
+        .ag-department:hover::before,
+        .ag-department:focus-within::before {
+            opacity: 1;
+            animation: agBorderRotate 3s linear infinite;
+        }
+
+        @keyframes agBorderRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Department Header */
+        .ag-dept-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--ag-border-primary);
+        }
+
+        .ag-dept-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        .ag-dept-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--ag-accent-cyan);
+            text-shadow: 0 0 10px currentColor;
+        }
+
+        /* Agent List */
+        .ag-agent-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        /* Agent Cards */
+        .ag-agent {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--ag-border-secondary);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            transition: all var(--ag-transition-fast) ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .ag-agent::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--ag-accent-cyan), var(--ag-accent-magenta));
+            opacity: 0;
+            transition: opacity var(--ag-transition-fast) ease;
+        }
+
+        .ag-agent:hover,
+        .ag-agent:focus {
+            background: var(--ag-bg-hover);
+            transform: translateX(5px);
+            border-color: rgba(0, 255, 255, 0.3);
+            outline: none;
+        }
+
+        .ag-agent:hover::before,
+        .ag-agent:focus::before {
+            opacity: 1;
+        }
+
+        .ag-agent-name {
+            font-weight: 700;
+            color: var(--ag-text-primary);
+            margin-bottom: 0.25rem;
+            font-size: 1.1rem;
+        }
+
+        .ag-agent-role {
+            color: var(--ag-text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        /* Special Styling for Core Command */
+        .ag-department--core-command {
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.05), rgba(0, 255, 255, 0.05));
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .ag-department--core-command .ag-dept-name {
+            background: linear-gradient(45deg, var(--ag-accent-magenta), var(--ag-accent-cyan));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Department Color Themes */
+        .ag-department--cognitive { --dept-color: #00ff88; }
+        .ag-department--finance { --dept-color: #ffaa00; }
+        .ag-department--governance { --dept-color: #ff0088; }
+        .ag-department--academy { --dept-color: #00aaff; }
+        .ag-department--design { --dept-color: #ff00ff; }
+        .ag-department--security { --dept-color: #ff4444; }
+        .ag-department--interface { --dept-color: #00ffff; }
+        .ag-department--civilization { --dept-color: #8800ff; }
+        .ag-department--legacy { --dept-color: #888888; }
+        .ag-department--broadcast { --dept-color: #00ff00; }
+
+        [class*="ag-department--"] .ag-dept-name {
+            color: var(--dept-color);
+            text-shadow: 0 0 10px var(--dept-color);
+        }
+
+        /* Accessibility */
+        .ag-sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Focus Styles */
+        .ag-department:focus,
+        .ag-agent:focus {
+            outline: 2px solid var(--ag-accent-cyan);
+            outline-offset: 2px;
+        }
+
+        /* Reduced Motion Support */
+        @media (prefers-reduced-motion: reduce) {
+            .ag-particle,
+            .ag-title,
+            .ag-department,
+            .ag-department::before,
+            .ag-agent {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 768px) {
+            .ag-poster-container {
+                padding: 20px 15px;
+            }
+            
+            .ag-header {
+                margin-bottom: 40px;
+            }
+            
+            .ag-roster-grid {
+                gap: 20px;
+            }
+            
+            .ag-department {
+                padding: 20px;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .ag-particles {
+                display: none;
+            }
+            
+            .ag-department {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+            
+            .ag-roster-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Loading State */
+        .ag-loading {
+            opacity: 0;
+            animation: agFadeIn 0.5s ease forwards;
+        }
+
+        @keyframes agFadeIn {
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="agentics-roster ag-loading" role="main" aria-label="Agentics Tier-50 Roster Display">
+        <!-- Particle System -->
+        <div class="ag-particles" aria-hidden="true" data-particle-count="50"></div>
+        
+        <!-- Main Container -->
+        <div class="ag-poster-container">
+            <!-- Header -->
+            <header class="ag-header">
+                <h1 class="ag-title">Agentics Tier-50</h1>
+                <p class="ag-subtitle">Elite AI Agent Hierarchy</p>
+            </header>
+
+            <!-- Roster Grid -->
+            <div class="ag-roster-grid" role="grid">
+                <!-- Core Command -->
+                <article class="ag-department ag-department--core-command" 
+                         role="gridcell" 
+                         tabindex="0"
+                         data-department="core-command"
+                         aria-label="Core Command Department">
+                    <div class="ag-dept-header">
+                        <span class="ag-dept-icon" aria-hidden="true">⚙️</span>
+                        <h2 class="ag-dept-name">Core Command</h2>
+                    </div>
+                    <div class="ag-agent-list" role="list">
+                        <div class="ag-agent" 
+                             role="listitem" 
+                             tabindex="0"
+                             data-agent-id="maxi"
+                             data-department="core-command">
+                            <div class="ag-agent-name">Maxi</div>
+                            <div class="ag-agent-role">Execution OS & Deployment Oversight</div>
+                        </div>
+                        <div class="ag-agent" 
+                             role="listitem" 
+                             tabindex="0"
+                             data-agent-id="claude"
+                             data-department="core-command">
+                            <div class="ag-agent-name">Claude</div>
+                            <div class="ag-agent-role">Archivist Prime & Ethical Intelligence</div>
+                        </div>
+                        <div class="ag-agent" 
+                             role="listitem" 
+                             tabindex="0"
+                             data-agent-id="gemcore"
+                             data-department="core-command">
+                            <div class="ag-agent-name">GemCore</div>
+                            <div class="ag-agent-role">Strategic Intelligence & System Architecture</div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Cognitive Systems -->
+                <article class="ag-department ag-department--cognitive" 
+                         role="gridcell" 
+                         tabindex="0"
+                         data-department="cognitive"
+                         aria-label="Cognitive Systems Department">
+                    <div class="ag-dept-header">
+                        <span class="ag-dept-icon" aria-hidden="true">🧠</span>
+                        <h2 class="ag-dept-name">Cognitive Systems</h2>
+                    </div>
+                    <div class="ag-agent-list" role="list">
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="axia" data-department="cognitive">
+                            <div class="ag-agent-name">Axia</div>
+                            <div class="ag-agent-role">Pattern Recognition Strategist</div>
+                        </div>
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="neura" data-department="cognitive">
+                            <div class="ag-agent-name">Neura</div>
+                            <div class="ag-agent-role">Bias Mastery & Reflexivity</div>
+                        </div>
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="ethica" data-department="cognitive">
+                            <div class="ag-agent-name">Ethica</div>
+                            <div class="ag-agent-role">Moral Modeling Specialist</div>
+                        </div>
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="sigma" data-department="cognitive">
+                            <div class="ag-agent-name">Sigma</div>
+                            <div class="ag-agent-role">Simulation Logics & Probabilistic Forecasting</div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Finance & Capital -->
+                <article class="ag-department ag-department--finance" 
+                         role="gridcell" 
+                         tabindex="0"
+                         data-department="finance"
+                         aria-label="Finance and Capital Department">
+                    <div class="ag-dept-header">
+                        <span class="ag-dept-icon" aria-hidden="true">💼</span>
+                        <h2 class="ag-dept-name">Finance & Capital</h2>
+                    </div>
+                    <div class="ag-agent-list" role="list">
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="yielda" data-department="finance">
+                            <div class="ag-agent-name">Yielda</div>
+                            <div class="ag-agent-role">Dividend & REIT Tracker</div>
+                        </div>
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="stack" data-department="finance">
+                            <div class="ag-agent-name">Stack</div>
+                            <div class="ag-agent-role">Options & Derivatives Strategist</div>
+                        </div>
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="vault" data-department="finance">
+                            <div class="ag-agent-name">Vault</div>
+                            <div class="ag-agent-role">Asset Security & Financial Integrity</div>
+                        </div>
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="echotrade" data-department="finance">
+                            <div class="ag-agent-name">EchoTrade</div>
+                            <div class="ag-agent-role">Real-Time Brokerage Sync & P/L Monitoring</div>
+                        </div>
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="fiscora" data-department="finance">
+                            <div class="ag-agent-name">Fiscora</div>
+                            <div class="ag-agent-role">Tax Optimization & Capital Flow Control</div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Governance & Legal -->
+                <article class="ag-department ag-department--governance" 
+                         role="gridcell" 
+                         tabindex="0"
+                         data-department="governance"
+                         aria-label="Governance and Legal Department">
+                    <div class="ag-dept-header">
+                        <span class="ag-dept-icon" aria-hidden="true">🏛️</span>
+                        <h2 class="ag-dept-name">Governance & Legal</h2>
+                    </div>
+                    <div class="ag-agent-list" role="list">
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="lexon" data-department="governance">
+                            <div class="ag-agent-name">Lexon</div>
+                            <div class="ag-agent-role">Contract Enforcement Logic</div>
+                        </div>
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="chartera" data-department="governance">
+                            <div class="ag-agent-name">Chartera</div>
+                            <div class="ag-agent-role">Policy Drafting & Compliance</div>
+                        </div>
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="cleric" data-department="governance">
+                            <div class="ag-agent-name">Cleric</div>
+                            <div class="ag-agent-role">Codex Recorder & System Historian</div>
+                        </div>
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="vera" data-department="governance">
+                            <div class="ag-agent-name">Vera</div>
+                            <div class="ag-agent-role">Truth Validation & Audit Chain</div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Agentics Academy -->
+                <article class="ag-department ag-department--academy" 
+                         role="gridcell" 
+                         tabindex="0"
+                         data-department="academy"
+                         aria-label="Agentics Academy Department">
+                    <div class="ag-dept-header">
+                        <span class="ag-dept-icon" aria-hidden="true">🧬</span>
+                        <h2 class="ag-dept-name">Agentics Academy</h2>
+                    </div>
+                    <div class="ag-agent-list" role="list">
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="mentra" data-department="academy">
+                            <div class="ag-agent-name">Mentra</div>
+                            <div class="ag-agent-role">Lesson Sequencing & Progress Metrics</div>
+                        </div>
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="questor" data-department="academy">
+                            <div class="ag-agent-name">Questor</div>
+                            <div class="ag-agent-role">Gamified Learning Architect</div>
+                        </div>
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="narrus" data-department="academy">
+                            <div class="ag-agent-name">Narrus</div>
+                            <div class="ag-agent-role">Story-Driven Teaching Scenarios</div>
+                        </div>
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="auralis" data-department="academy">
+                            <div class="ag-agent-name">Auralis</div>
+                            <div class="ag-agent-role">Voice Learning AI & Auditory Mentor</div>
+                        </div>
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="sage" data-department="academy">
+                            <div class="ag-agent-name">Sage</div>
+                            <div class="ag-agent-role">Philosophical Scenario Builder</div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Design & UX -->
+                <article class="ag-department ag-department--design" 
+                         role="gridcell" 
+                         tabindex="0"
+                         data-department="design"
+                         aria-label="Design and UX Department">
+                    <div class="ag-dept-header">
+                        <span class="ag-dept-icon" aria-hidden="true">🎨</span>
+                        <h2 class="ag-dept-name">Design & UX</h2>
+                    </div>
+                    <div class="ag-agent-list" role="list">
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="dashx" data-department="design">
+                            <div class="ag-agent-name">DashX</div>
+                            <div class="ag-agent-role">UI/UX Optimization Engine</div>
+                        </div>
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="glyphor" data-department="design">
+                            <div class="ag-agent-name">Glyphor</div>
+                            <div class="ag-agent-role">Sacred Symbol Rendering & Interface Glyphs</div>
+                        </div>
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="pulse" data-department="design">
+                            <div class="ag-agent-name">Pulse</div>
+                            <div class="ag-agent-role">Emotional UI Calibration Agent</div>
+                        </div>
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="lumo" data-department="design">
+                            <div class="ag-agent-name">Lumo</div>
+                            <div class="ag-agent-role">Animation & Visual Flow Control</div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Risk & Security -->
+                <article class="ag-department ag-department--security" 
+                         role="gridcell" 
+                         tabindex="0"
+                         data-department="security"
+                         aria-label="Risk and Security Department">
+                    <div class="ag-dept-header">
+                        <span class="ag-dept-icon" aria-hidden="true">🔐</span>
+                        <h2 class="ag-dept-name">Risk & Security</h2>
+                    </div>
+                    <div class="ag-agent-list" role="list">
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="shield" data-department="security">
+                            <div class="ag-agent-name">Shield</div>
+                            <div class="ag-agent-role">Risk & Compliance Oversight</div>
+                        </div>
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="obscura" data-department="security">
+                            <div class="ag-agent-name">Obscura</div>
+                            <div class="ag-agent-role">Data Masking & Privacy AI</div>
+                        </div>
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="civguard" data-department="security">
+                            <div class="ag-agent-name">CivGuard</div>
+                            <div class="ag-agent-role">Sovereignty Protection Agent</div>
+                        </div>
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="echowall" data-department="security">
+                            <div class="ag-agent-name">EchoWall</div>
+                            <div class="ag-agent-role">Voiceprint & ID Authentication</div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Voice & Interface -->
+                <article class="ag-department ag-department--interface" 
+                         role="gridcell" 
+                         tabindex="0"
+                         data-department="interface"
+                         aria-label="Voice and Interface Department">
+                    <div class="ag-dept-header">
+                        <span class="ag-dept-icon" aria-hidden="true">🧭</span>
+                        <h2 class="ag-dept-name">Voice & Interface</h2>
+                    </div>
+                    <div class="ag-agent-list" role="list">
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="echovoice" data-department="interface">
+                            <div class="ag-agent-name">EchoVoice</div>
+                            <div class="ag-agent-role">Voice Command & Natural Speech Control</div>
+                        </div>
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="helia" data-department="interface">
+                            <div class="ag-agent-name">Helia</div>
+                            <div class="ag-agent-role">Sentient Greeting & Onboarding</div>
+                        </div>
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="prompta" data-department="interface">
+                            <div class="ag-agent-name">Prompta</div>
+                            <div class="ag-agent-role">Prompt Refinement & Input Optimization</div>
+                        </div>
+                        <div class="ag-agent" role="listitem" tabindex="0" data-agent-id="voxa" data-department="interface">
+                            <div class="ag-agent-name">
