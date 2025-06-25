@@ -415,10 +415,36 @@
         <div class="ag-poster-container">
             <!-- Header -->
             <header class="ag-header">
-                <h1 class="ag-title">Agentics Tier-50</h1>
+                <h1 class="ag-title">Agentics Tier-51</h1>
                 <p class="ag-subtitle">Elite AI Agent Hierarchy</p>
             </header>
-
+        <!-- Founder Authority Indicator -->
+<div class="founder-authority" style="
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+">
+    <a href="founders-seal-system.html" class="founder-seal-mini" style="
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: linear-gradient(45deg, rgba(255,0,255,0.2), rgba(0,255,255,0.2));
+        border: 1px solid #ff00ff;
+        border-radius: 25px;
+        font-size: 14px;
+        color: #fff;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+    " onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 0 30px rgba(255, 0, 255, 0.5)'" 
+       onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 0 20px rgba(255, 0, 255, 0.3)'">
+        <span style="font-size: 20px;">🔏</span>
+        <span>Founder Authority Active</span>
+    </a>
+</div>
+</div>
             <!-- Roster Grid -->
             <div class="ag-roster-grid" role="grid">
                 <!-- Core Command -->
@@ -467,6 +493,18 @@
                     </div>
                 </article>
 
+                <!-- Founder Seal Verification for Core Command -->
+<div style="
+    text-align: center;
+    margin: -10px 0 20px 0;
+    font-size: 12px;
+    color: #ff00ff;
+    text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+">
+    <span>🔏 Authorized by Founder's Seal</span>
+</div>
+
+               
                 <!-- Cognitive Systems -->
                 <article class="ag-department ag-department--cognitive" 
                          role="gridcell" 
