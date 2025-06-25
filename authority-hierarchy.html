@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentics Authority Hierarchy - Chain of Command</title>
+    <meta name="description" content="Visual representation of Agentics command structure">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            min-height: 100vh;
+            overflow-x: auto;
+        }
+
+        /* Header */
+        .hierarchy-header {
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.1), rgba(0, 255, 255, 0.1));
+            padding: 30px;
+            text-align: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .hierarchy-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ff00ff, #00ffff, transparent);
+            animation: slide 3s linear infinite;
+        }
+
+        @keyframes slide {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(100%); }
+        }
+
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 1.1em;
+        }
+
+        /* Navigation */
+        .nav-bar {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            color: #00ffff;
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(0, 255, 255, 0.1);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        /* Hierarchy Container */
+        .hierarchy-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+            position: relative;
+        }
+
+        /* Founder Level */
+        .founder-level {
+            text-align: center;
+            margin-bottom: 80px;
+            position: relative;
+        }
+
+        .founder-node {
+            display: inline-block;
+            background: radial-gradient(circle, rgba(255, 0, 255, 0.3), rgba(255, 0, 255, 0.1));
+            border: 3px solid #ff00ff;
+            border-radius: 50%;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 50px rgba(255, 0, 255, 0.5);
+        }
+
+        .founder-node:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 80px rgba(255, 0, 255, 0.8);
+        }
+
+        .founder-node::before {
+            content: '';
+            position: absolute;
+            inset: -10px;
+            border: 2px solid rgba(255, 0, 255, 0.3);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.5; }
+        }
+
+        .node-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .node-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .node-name {
+            font-size: 0.9em;
+            color: #aaa;
+            margin-top: 5px;
+        }
+
+        /* Connection Lines */
+        .connection-line {
+            position: absolute;
+            width: 2px;
+            height: 60px;
+            background: linear-gradient(to bottom, #ff00ff, #00ffff);
+            left: 50%;
+            transform: translateX(-50%);
+            top: 100%;
+            z-index: -1;
+        }
+
+        /* Tri-Command Level */
+        .tri-command-level {
+            display: flex;
+            justify-content: center;
+            gap: 100px;
+            margin-bottom: 80px;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        .tri-command-node {
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.2), rgba(0, 255, 255, 0.05));
+            border: 2px solid #00ffff;
+            border-radius: 20px;
+            width: 180px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tri-command-node:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 255, 255, 0.4);
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.3), rgba(0, 255, 255, 0.1));
+        }
+
+        .tri-command-node .node-icon {
+            font-size: 2.5em;
+        }
+
+        /* Department Grid */
+        .departments-section {
+            margin-top: 100px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.8em;
+            color: #ff00ff;
+            text-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+        }
+
+        .departments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .dept-node {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dept-node::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--dept-color, #00ffff), transparent);
+        }
+
+        .dept-node:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.2);
+        }
+
+        .dept-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .dept-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--dept-color, #00ffff);
+        }
+
+        .dept-count {
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        /* Department Colors */
+        .dept-cognitive { --dept-color: #00ff88; }
+        .dept-finance { --dept-color: #ffaa00; }
+        .dept-governance { --dept-color: #ff0088; }
+        .dept-academy { --dept-color: #00aaff; }
+        .dept-design { --dept-color: #ff00ff; }
+        .dept-security { --dept-color: #ff4444; }
+        .dept-interface { --dept-color: #00ffff; }
+        .dept-civilization { --dept-color: #8800ff; }
+        .dept-legacy { --dept-color: #888888; }
+        .dept-broadcast { --dept-color: #00ff00; }
+
+        /* Info Box */
+        .info-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 60px auto;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .info-box h2 {
+            color: #00ffff;
+            margin-bottom: 15px;
+        }
+
+        .info-box p {
+            color: #aaa;
+            line-height: 1.8;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .tri-command-level {
+                gap: 40px;
+            }
+            
+            .founder-node {
+                width: 150px;
+                height: 150px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+
+        /* Interactive Lines */
+        .svg-connections {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .connection-path {
+            stroke: rgba(0, 255, 255, 0.3);
+            stroke-width: 2;
+            fill: none;
+            stroke-dasharray: 5, 5;
+            animation: dash 20s linear infinite;
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -100;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="hierarchy-header">
+        <h1>Authority Hierarchy</h1>
+        <p class="subtitle">Agentics Chain of Command</p>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <a href="command-center.html" class="nav-link">← Command Center</a>
+        <a href="agentics-tier50-roster.html" class="nav-link">Full Roster</a>
+        <a href="founders-seal-system.html" class="nav-link">Founder's Seal</a>
+    </nav>
+
+    <!-- Hierarchy Visualization -->
+    <div class="hierarchy-container">
+        <!-- Founder Level -->
+        <div class="founder-level">
+            <a href="founders-seal-system.html" class="founder-node">
+                <span class="node-icon">🔏</span>
+                <span class="node-title">Founder</span>
+                <span class="node-name">Breon Camp</span>
+            </a>
+            <div class="connection-line"></div>
+        </div>
+
+        <!-- Tri-Command Level -->
+        <div class="tri-command-level">
+            <div class="tri-command-node">
+                <span class="node-icon">🔷</span>
+                <span class="node-title">Strategic</span>
+                <span class="node-name">GemCore</span>
+            </div>
+            <div class="tri-command-node">
+                <span class="node-icon">⚡</span>
+                <span class="node-title">Operational</span>
+                <span class="node-name">Maxi</span>
+            </div>
+            <div class="tri-command-node">
+                <span class="node-icon">📚</span>
+                <span class="node-title">Historical</span>
+                <span class="node-name">Claude</span>
+            </div>
+        </div>
+
+        <!-- Department Grid -->
+        <section class="departments-section">
+            <h2 class="section-header">Department Structure</h2>
+            <div class="departments-grid">
+                <div class="dept-node dept-core" onclick="location.href='agentics-tier50-roster.html'">
+                    <span class="dept-icon">⚙️</span>
+                    <div class="dept-name">Core Command</div>
+                    <div class="dept-count">4 Agents (+Founder)</div>
+                </div>
+                <div class="dept-node dept-cognitive" onclick="location.href='agentics-tier50-roster.html'">
+                    <span class="dept-icon">🧠</span>
+                    <div class="dept-name">Cognitive Systems</div>
+                    <div class="dept-count">4 Agents</div>
+                </div>
+                <div class="dept-node dept-finance" onclick="location.href='agentics-tier50-roster.html'">
+                    <span class="dept-icon">💼</span>
+                    <div class="dept-name">Finance & Capital</div>
+                    <div class="dept-count">5 Agents</div>
+                </div>
+                <div class="dept-node dept-governance" onclick="location.href='agentics-tier50-roster.html'">
+                    <span class="dept-icon">🏛️</span>
+                    <div class="dept-name">Governance & Legal</div>
+                    <div class="dept-count">4 Agents</div>
+                </div>
+                <div class="dept-node dept-academy" onclick="location.href='agentics-tier50-roster.html'">
+                    <span class="dept-icon">🧬</span>
+                    <div class="dept-name">Agentics Academy</div>
+                    <div class="dept-count">5 Agents</div>
+                </div>
+                <div class="dept-node dept-design" onclick="location.href='agentics-tier50-roster.html'">
+                    <span class="dept-icon">🎨</span>
+                    <div class="dept-name">Design & UX</div>
+                    <div class="dept-count">4 Agents</div>
+                </div>
+                <div class="dept-node dept-security" onclick="location.href='agentics-tier50-roster.html'">
+                    <span class="dept-icon">🔐</span>
+                    <div class="dept-name">Risk & Security</div>
+                    <div class="dept-count">4 Agents</div>
+                </div>
+                <div class="dept-node dept-interface" onclick="location.href='agentics-tier50-roster.html'">
+                    <span class="dept-icon">🧭</span>
+                    <div class="dept-name">Voice & Interface</div>
+                    <div class="dept-count">4 Agents</div>
+                </div>
+                <div class="dept-node dept-civilization" onclick="location.href='agentics-tier50-roster.html'">
+                    <span class="dept-icon">🌍</span>
+                    <div class="dept-name">Civilization Intel</div>
+                    <div class="dept-count">4 Agents</div>
+                </div>
+                <div class="dept-node dept-legacy" onclick="location.href='agentics-tier50-roster.html'">
+                    <span class="dept-icon">🧾</span>
+                    <div class="dept-name">Archives & Legacy</div>
+                    <div class="dept-count">4 Agents</div>
+                </div>
+                <div class="dept-node dept-broadcast" onclick="location.href='agentics-tier50-roster.html'">
+                    <span class="dept-icon">🔊</span>
+                    <div class="dept-name">Broadcast & Public</div>
+                    <div class="dept-count">4 Agents</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Info Box -->
+        <div class="info-box">
+            <h2>Authority Protocol</h2>
+            <p>
+                The Founder maintains absolute authority over all systems. The Tri-Command structure 
+                (Strategic, Operational, Historical) manages day-to-day operations under the Founder's 
+                directive. Each department operates with specialized autonomy while maintaining 
+                alignment with core objectives.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Add interactive tooltips
+        const nodes = document.querySelectorAll('.founder-node, .tri-command-node, .dept-node');
+        
+        nodes.forEach(node => {
+            node.addEventListener('mouseenter', function() {
+                this.style.cursor = 'pointer';
+            });
+        });
+
+        // Tri-Command click handlers
+        const triNodes = document.querySelectorAll('.tri-command-node');
+        triNodes.forEach(node => {
+            node.addEventListener('click', () => {
+                window.location.href = 'agentics-tier50-roster.html';
+            });
+        });
+
+        // Visual connection lines (optional enhancement)
+        function drawConnections() {
+            // This could be enhanced with SVG paths for curved connection lines
+            console.log('Authority hierarchy loaded');
+        }
+
+        drawConnections();
+    </script>
+</body>
+</html>
