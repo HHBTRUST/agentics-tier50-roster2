@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent [NAME] - Agentics Profile</title>
+    <link rel="stylesheet" href="../assets/css/agentics-core.css">
+    <style>
+        .profile-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .profile-header {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, rgba(255,0,255,0.1), rgba(0,255,255,0.1));
+            border-radius: 20px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .agent-avatar {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+            background: radial-gradient(circle, var(--ag-cyan), var(--ag-magenta));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4em;
+            box-shadow: 0 0 50px rgba(0,255,255,0.5);
+        }
+
+        .agent-name {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .agent-role {
+            font-size: 1.3em;
+            color: var(--ag-text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .agent-department {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--dept-color);
+            border-radius: 20px;
+            color: var(--dept-color);
+        }
+
+        .capabilities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .capability-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .capability-card:hover {
+            transform: translateY(-5px);
+            background: rgba(0,255,255,0.1);
+            box-shadow: 0 10px 30px rgba(0,255,255,0.3);
+        }
+
+        .capability-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .metrics-section {
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 40px 0;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+
+        .metric-value {
+            color: var(--ag-cyan);
+            font-weight: bold;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+
+        /* Department-specific colors */
+        .dept-core-command { --dept-color: #ff00ff; }
+        .dept-cognitive { --dept-color: #00ff88; }
+        .dept-finance { --dept-color: #ffaa00; }
+        .dept-governance { --dept-color: #ff0088; }
+        .dept-academy { --dept-color: #00aaff; }
+        .dept-design { --dept-color: #ff00ff; }
+        .dept-security { --dept-color: #ff4444; }
+        .dept-interface { --dept-color: #00ffff; }
+        .dept-civilization { --dept-color: #8800ff; }
+        .dept-legacy { --dept-color: #888888; }
+        .dept-broadcast { --dept-color: #00ff00; }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <!-- Back Navigation -->
+        <nav style="margin-bottom: 20px;">
+            <a href="../agentics-tier50-roster.html" class="ag-button">← Back to Roster</a>
+            <a href="../command-center.html" class="ag-button">Command Center</a>
+        </nav>
+
+        <!-- Profile Header -->
+        <header class="profile-header">
+            <div class="agent-avatar">[ICON]</div>
+            <h1 class="agent-name gradient-text">[AGENT NAME]</h1>
+            <p class="agent-role">[AGENT ROLE]</p>
+            <span class="agent-department dept-[DEPARTMENT]">[DEPARTMENT NAME]</span>
+        </header>
+
+        <!-- Capabilities -->
+        <section>
+            <h2 class="gradient-text" style="text-align: center; margin-bottom: 30px;">Core Capabilities</h2>
+            <div class="capabilities-grid">
+                <div class="capability-card">
+                    <span class="capability-icon">🎯</span>
+                    <h3>Primary Function</h3>
+                    <p>[CAPABILITY 1]</p>
+                </div>
+                <div class="capability-card">
+                    <span class="capability-icon">⚡</span>
+                    <h3>Secondary Function</h3>
+                    <p>[CAPABILITY 2]</p>
+                </div>
+                <div class="capability-card">
+                    <span class="capability-icon">🔧</span>
+                    <h3>Special Skills</h3>
+                    <p>[CAPABILITY 3]</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Metrics -->
+        <section class="metrics-section">
+            <h2 class="gradient-text" style="margin-bottom: 20px;">Performance Metrics</h2>
+            <div class="metric-row">
+                <span>Status</span>
+                <span class="metric-value">Active</span>
+            </div>
+            <div class="metric-row">
+                <span>Clearance Level</span>
+                <span class="metric-value">[CLEARANCE]</span>
+            </div>
+            <div class="metric-row">
+                <span>Integration Date</span>
+                <span class="metric-value">[DATE]</span>
+            </div>
+            <div class="metric-row">
+                <span>Authority Chain</span>
+                <span class="metric-value">[CHAIN]</span>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <div class="nav-buttons">
+            <a href="[PREV-AGENT].html" class="ag-button">← Previous Agent</a>
+            <a href="[NEXT-AGENT].html" class="ag-button">Next Agent →</a>
+        </div>
+    </div>
+
+    <script src="../assets/js/agentics-core.js"></script>
+</body>
+</html>
