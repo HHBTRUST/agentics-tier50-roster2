@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agentics Command Center - Executive Dashboard</title>
     <meta name="description" content="Central command hub for Agentics System operations">
+    <link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="assets/images/icon-192.png">
     <style>
         * {
             margin: 0;
@@ -353,12 +357,58 @@
             </div>
         </section>
 
+        <a href="status-dashboard.html" class="action-btn">
+    <span class="action-icon">📊</span>
+    <span>Live Status</span>
+</a>
+
 
         <a href="authority-hierarchy.html" class="action-btn">
     <span class="action-icon">🏛️</span>
     <span>Authority Chain</span>
 </a>
-        <!-- Department Overview -->
+     
+<a href="api-documentation.html" class="action-btn">
+    <span class="action-icon">📡</span>
+    <span>API Docs</span>
+</a>
+<script>
+// Register Service Worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => console.log('SW registered:', registration))
+            .catch(err => console.log('SW registration failed:', err));
+    });
+}
+
+// PWA Install Prompt
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    // Show install button
+    const installBtn = document.createElement('button');
+    installBtn.textContent = '📱 Install App';
+    installBtn.className = 'ag-button ag-button-primary';
+    installBtn.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 1000;';
+    installBtn.onclick = async () => {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`User ${outcome} the install prompt`);
+        deferredPrompt = null;
+        installBtn.remove();
+    };
+    document.body.appendChild(installBtn);
+});
+</script>
+<script src="assets/js/agentics-voice.js"></script>
+<a href="communication-matrix.html" class="action-btn">
+    <span class="action-icon">🔗</span>
+    <span>Comm Matrix</span>
+</a>
+
+<!-- Department Overview -->
         <section>
             <h2 class="section-title">Department Status</h2>
             <div class="department-grid">
@@ -510,3 +560,8 @@
     </script>
 </body>
 </html>
+
+<a href="voice-commands.html" class="action-btn">
+    <span class="action-icon">🎙️</span>
+    <span>Voice Guide</span>
+</a>
