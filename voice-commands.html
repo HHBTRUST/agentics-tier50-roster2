@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentics Voice Commands - Hey Agentics</title>
+    <link rel="stylesheet" href="assets/css/agentics-core.css">
+    <style>
+        .voice-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .voice-header {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, rgba(255,0,255,0.1), rgba(0,255,255,0.1));
+            border-radius: 20px;
+            margin-bottom: 40px;
+        }
+
+        .voice-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        .command-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .command-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .command-card:hover {
+            transform: translateY(-5px);
+            background: rgba(0,255,255,0.1);
+            box-shadow: 0 10px 30px rgba(0,255,255,0.3);
+        }
+
+        .command-phrase {
+            font-size: 1.2em;
+            color: var(--ag-cyan);
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .command-description {
+            color: var(--ag-text-secondary);
+            line-height: 1.6;
+        }
+
+        .try-section {
+            background: rgba(0,255,255,0.05);
+            border: 2px solid var(--ag-cyan);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .voice-button-demo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--ag-magenta), var(--ag-cyan));
+            border: none;
+            color: white;
+            font-size: 32px;
+            cursor: pointer;
+            margin: 20px auto;
+            display: block;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0,255,255,0.5);
+        }
+
+        .voice-button-demo:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(0,255,255,0.7);
+        }
+
+        .voice-button-demo:active {
+            transform: scale(0.95);
+        }
+
+        .tips-section {
+            background: rgba(255,255,255,0.03);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 40px 0;
+        }
+
+        .tip-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .tip-icon {
+            font-size: 1.5em;
+            color: var(--ag-cyan);
+        }
+    </style>
+</head>
+<body>
+    <div class="voice-container">
+        <!-- Header -->
+        <header class="voice-header">
+            <div class="voice-icon">🎙️</div>
+            <h1 class="gradient-text">Hey Agentics</h1>
+            <p style="font-size: 1.3em; color: var(--ag-text-secondary);">
+                Voice Command System
+            </p>
+        </header>
+
+        <!-- Try It Section -->
+        <div class="try-section">
+            <h2 class="gradient-text">Try Voice Commands Now</h2>
+            <p style="margin-bottom: 20px;">Click the microphone button or press it on any page</p>
+            <button class="voice-button-demo" onclick="startVoiceDemo()">🎤</button>
+            <p style="color: var(--ag-text-secondary); font-size: 0.9em;">
+                Say "Hey Agentics" to get started
+            </p>
+        </div>
+
+        <!-- Available Commands -->
+        <h2 class="gradient-text" style="text-align: center; margin: 40px 0;">Available Voice Commands</h2>
+        
+        <div class="command-grid">
+            <!-- Navigation Commands -->
+            <div class="command-card">
+                <div class="command-phrase">"Show roster"</div>
+                <div class="command-description">Navigate to the full agent roster</div>
+            </div>
+            
+            <div class="command-card">
+                <div class="command-phrase">"Command center"</div>
+                <div class="command-description">Open the main command center dashboard</div>
+            </div>
+            
+            <div class="command-card">
+                <div class="command-phrase">"Show status"</div>
+                <div class="command-description">View live system status and metrics</div>
+            </div>
+            
+            <div class="command-card">
+                <div class="command-phrase">"Founder seal"</div>
+                <div class="command-description">Display the Founder's authority seal</div>
+            </div>
+            
+            <div class="command-card">
+                <div class="command-phrase">"Show authority"</div>
+                <div class="command-description">View the authority hierarchy chart</div>
+            </div>
+            
+            <!-- Search Commands -->
+            <div class="command-card">
+                <div class="command-phrase">"Search for [agent name]"</div>
+                <div class="command-description">Search for a specific agent by name</div>
+            </div>
+            
+            <div class="command-card">
+                <div class="command-phrase">"Find agent [name]"</div>
+                <div class="command-description">Locate an agent in the roster</div>
+            </div>
+            
+            <div class="command-card">
+                <div class="command-phrase">"Show [agent name]"</div>
+                <div class="command-description">View detailed agent profile</div>
+            </div>
+            
+            <!-- System Commands -->
+            <div class="command-card">
+                <div class="command-phrase">"Status report"</div>
+                <div class="command-description">Get verbal system status update</div>
+            </div>
+            
+            <div class="command-card">
+                <div class="command-phrase">"Help"</div>
+                <div class="command-description">List available voice commands</div>
+            </div>
+            
+            <div class="command-card">
+                <div class="command-phrase">"Hey Agentics"</div>
+                <div class="command-description">Wake phrase to activate listening</div>
+            </div>
+        </div>
+
+        <!-- Tips Section -->
+        <div class="tips-section">
+            <h2 class="gradient-text" style="margin-bottom: 20px;">Voice Command Tips</h2>
+            
+            <div class="tip-item">
+                <span class="tip-icon">💡</span>
+                <span>Speak clearly and wait for the listening indicator</span>
+            </div>
+            
+            <div class="tip-item">
+                <span class="tip-icon">🎯</span>
+                <span>Commands work on all pages with the microphone button</span>
+            </div>
+            
+            <div class="tip-item">
+                <span class="tip-icon">⌨️</span>
+                <span>Press Cmd/Ctrl + Shift + V as a keyboard shortcut</span>
+            </div>
+            
+            <div class="tip-item">
+                <span class="tip-icon">🔊</span>
+                <span>System will confirm commands with voice feedback</span>
+            </div>
+            
+            <div class="tip-item">
+                <span class="tip-icon">🌐</span>
+                <span>Works best in Chrome, Edge, and Safari browsers</span>
+            </div>
+        </div>
+
+        <!-- Examples -->
+        <div style="background: rgba(255,255,255,0.03); border-radius: 15px; padding: 30px; margin: 40px 0;">
+            <h3 class="gradient-text">Example Conversations</h3>
+            
+            <div style="margin: 20px 0;">
+                <p style="color: var(--ag-cyan);">You: "Hey Agentics"</p>
+                <p style="color: var(--ag-magenta);">System: "Yes, Founder. How may I assist you?"</p>
+                <p style="color: var(--ag-cyan);">You: "Search for Copilot"</p>
+                <p style="color: var(--ag-magenta);">System: "Searching for Copilot"</p>
+            </div>
+            
+            <div style="margin: 20px 0;">
+                <p style="color: var(--ag-cyan);">You: "Status report"</p>
+                <p style="color: var(--ag-magenta);">System: "All systems operational. 51 agents active. System uptime 99.9 percent. No alerts."</p>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="command-center.html" class="ag-button ag-button-primary">Back to Command Center</a>
+        </div>
+    </div>
+
+    <script src="assets/js/agentics-core.js"></script>
+    <script src="assets/js/agentics-voice.js"></script>
+    <script>
+        function startVoiceDemo() {
+            if (window.agenticsVoice) {
+                window.agenticsVoice.toggleListening();
+            } else {
+                alert('Voice commands are initializing. Please try again in a moment.');
+            }
+        }
+
+        // Add keyboard shortcut
+        document.addEventListener('keydown', (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'V') {
+                e.preventDefault();
+                startVoiceDemo();
+            }
+        });
+    </script>
+</body>
+</html>
