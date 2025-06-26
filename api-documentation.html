@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentics API Documentation - Developer Portal</title>
+    <link rel="stylesheet" href="assets/css/agentics-core.css">
+    <style>
+        .api-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .api-header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 40px;
+            background: linear-gradient(135deg, rgba(255,0,255,0.1), rgba(0,255,255,0.1));
+            border-radius: 20px;
+        }
+
+        .api-nav {
+            position: sticky;
+            top: 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 40px;
+        }
+
+        .api-nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .api-nav a {
+            color: var(--ag-cyan);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .api-nav a:hover {
+            background: rgba(0,255,255,0.1);
+        }
+
+        .endpoint-section {
+            margin-bottom: 60px;
+            padding: 30px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .method-badge {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .method-get { background: #00a86b; }
+        .method-post { background: #0080ff; }
+        .method-put { background: #ff9500; }
+        .method-delete { background: #ff3b30; }
+
+        .endpoint-url {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2em;
+            color: var(--ag-cyan);
+        }
+
+        .code-block {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .code-block pre {
+            margin: 0;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .param-table {
+            width: 100%;
+            margin: 20px 0;
+            border-collapse: collapse;
+        }
+
+        .param-table th,
+        .param-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .param-table th {
+            background: rgba(255,255,255,0.05);
+            color: var(--ag-cyan);
+        }
+
+        .param-required {
+            color: #ff3b30;
+            font-weight: bold;
+        }
+
+        .param-optional {
+            color: #888;
+        }
+
+        .response-example {
+            margin-top: 30px;
+        }
+
+        .status-code {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .status-200 { background: #00a86b; }
+        .status-400 { background: #ff9500; }
+        .status-401 { background: #ff3b30; }
+        .status-404 { background: #888; }
+
+        .try-it-section {
+            background: rgba(0,255,255,0.05);
+            border: 1px solid var(--ag-cyan);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+
+        .try-it-form input,
+        .try-it-form select {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+            width: 100%;
+        }
+
+        .try-it-btn {
+            background: var(--ag-cyan);
+            color: black;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .try-it-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0,255,255,0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="api-container">
+        <!-- Header -->
+        <header class="api-header">
+            <h1 class="gradient-text">Agentics API Documentation</h1>
+            <p style="color: var(--ag-text-secondary); font-size: 1.2em;">
+                Developer portal for Agentics system integration
+            </p>
+            <div style="margin-top: 20px;">
+                <code style="background: rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 5px;">
+                    Base URL: https://api.agentics.systems/v1
+                </code>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="api-nav">
+            <ul>
+                <li><a href="#authentication">Authentication</a></li>
+                <li><a href="#agents">Agents</a></li>
+                <li><a href="#departments">Departments</a></li>
+                <li><a href="#commands">Commands</a></li>
+                <li><a href="#status">Status</a></li>
+                <li><a href="#webhooks">Webhooks</a></li>
+            </ul>
+        </nav>
+
+        <!-- Authentication -->
+        <section id="authentication" class="endpoint-section">
+            <h2 class="gradient-text">Authentication</h2>
+            <p>All API requests require authentication using the Founder's Seal token.</p>
+            
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre>// Header Authentication
+Authorization: Bearer YOUR_FOUNDER_SEAL_TOKEN
+
+// Example Request
+curl -H "Authorization: Bearer fs_live_a1b2c3d4e5f6" \
+     https://api.agentics.systems/v1/agents</pre>
+            </div>
+        </section>
+
+        <!-- Agents Endpoints -->
+        <section id="agents" class="endpoint-section">
+            <h2 class="gradient-text">Agent Endpoints</h2>
+            
+            <!-- Get All Agents -->
+            <div style="margin-bottom: 40px;">
+                <div class="endpoint-header">
+                    <span class="method-badge method-get">GET</span>
+                    <span class="endpoint-url">/agents</span>
+                </div>
+                <p>Retrieve all agents in the system.</p>
+                
+                <h4>Query Parameters</h4>
+                <table class="param-table">
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td>department</td>
+                        <td>string</td>
+                        <td><span class="param-optional">Optional</span> Filter by department</td>
+                    </tr>
+                    <tr>
+                        <td>status</td>
+                        <td>string</td>
+                        <td><span class="param-optional">Optional</span> Filter by status (active/inactive)</td>
+                    </tr>
+                    <tr>
+                        <td>limit</td>
+                        <td>integer</td>
+                        <td><span class="param-optional">Optional</span> Number of results (default: 50)</td>
+                    </tr>
+                </table>
+
+                <div class="response-example">
+                    <h4>Response</h4>
+                    <span class="status-code status-200">200 OK</span>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre>{
+  "success": true,
+  "data": {
+    "agents": [
+      {
+        "id": "maxi",
+        "name": "Maxi",
+        "role": "Execution OS & Deployment Oversight",
+        "department": "core-command",
+        "status": "active",
+        "clearance": 10,
+        "capabilities": [
+          "deployment-automation",
+          "system-optimization",
+          "multi-platform-orchestration"
+        ]
+      },
+      // ... more agents
+    ],
+    "total": 51,
+    "page": 1
+  }
+}</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Get Single Agent -->
+            <div style="margin-bottom: 40px;">
+                <div class="endpoint-header">
+                    <span class="method-badge method-get">GET</span>
+                    <span class="endpoint-url">/agents/{agentId}</span>
+                </div>
+                <p>Retrieve detailed information about a specific agent.</p>
+                
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre>GET /agents/copilot
+
+Response:
+{
+  "success": true,
+  "data": {
+    "id": "copilot",
+    "name": "Copilot",
+    "role": "Code Companion & DevOps Automation Specialist",
+    "department": "core-command",
+    "status": "active",
+    "clearance": 10,
+    "integrationDate": "2025-06-21",
+    "authorityChain": ["founder", "tri-command", "operations"],
+    "capabilities": {
+      "primary": ["devops-automation", "code-generation"],
+      "secondary": ["repository-sync", "markdown-notarization"],
+      "special": ["git-memory-checkpoints", "cross-module-integration"]
+    },
+    "metrics": {
+      "tasksCompleted": 1247,
+      "successRate": 99.8,
+      "responseTime": 12
+    }
+  }
+}</pre>
+                </div>
+            </div>
+
+            <!-- Try It Section -->
+            <div class="try-it-section">
+                <h3>Try It Out</h3>
+                <form class="try-it-form" onsubmit="tryAPI(event)">
+                    <select id="tryEndpoint">
+                        <option value="/agents">GET /agents</option>
+                        <option value="/agents/maxi">GET /agents/maxi</option>
+                    </select>
+                    <input type="text" id="tryToken" placeholder="Your API Token (fs_live_...)" required>
+                    <button type="submit" class="try-it-btn">Send Request</button>
+                </form>
+                <div id="tryResult" style="margin-top: 20px;"></div>
+            </div>
+        </section>
+
+        <!-- Commands Endpoints -->
+        <section id="commands" class="endpoint-section">
+            <h2 class="gradient-text">Command Endpoints</h2>
+            
+            <div class="endpoint-header">
+                <span class="method-badge method-post">POST</span>
+                <span class="endpoint-url">/commands/execute</span>
+            </div>
+            <p>Execute a command through the Agentics system.</p>
+            
+            <h4>Request Body</h4>
+            <table class="param-table">
+                <tr>
+                    <th>Field</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>command</td>
+                    <td>string</td>
+                    <td><span class="param-required">Required</span> Command to execute</td>
+                </tr>
+                <tr>
+                    <td>targetAgent</td>
+                    <td>string</td>
+                    <td><span class="param-required">Required</span> Agent ID to execute command</td>
+                </tr>
+                <tr>
+                    <td>parameters</td>
+                    <td>object</td>
+                    <td><span class="param-optional">Optional</span> Command parameters</td>
+                </tr>
+                <tr>
+                    <td>priority</td>
+                    <td>string</td>
+                    <td><span class="param-optional">Optional</span> high/normal/low (default: normal)</td>
+                </tr>
+            </table>
+
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre>POST /commands/execute
+
+{
+  "command": "deploy-update",
+  "targetAgent": "maxi",
+  "parameters": {
+    "version": "1.2.0",
+    "environment": "production",
+    "rollback": true
+  },
+  "priority": "high"
+}
+
+Response:
+{
+  "success": true,
+  "data": {
+    "commandId": "cmd_a1b2c3d4",
+    "status": "executing",
+    "agent": "maxi",
+    "estimatedCompletion": "2025-01-20T12:34:56Z"
+  }
+}</pre>
+            </div>
+        </section>
+
+        <!-- Status Endpoints -->
+        <section id="status" class="endpoint-section">
+            <h2 class="gradient-text">System Status</h2>
+            
+            <div class="endpoint-header">
+                <span class="method-badge method-get">GET</span>
+                <span class="endpoint-url">/status</span>
+            </div>
+            <p>Get real-time system status and health metrics.</p>
+            
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre>GET /status
+
+Response:
+{
+  "success": true,
+  "data": {
+    "system": "operational",
+    "uptime": 99.9,
+    "agents": {
+      "total": 51,
+      "active": 51,
+      "inactive": 0
+    },
+    "departments": {
+      "total": 10,
+      "performance": {
+        "core-command": 100,
+        "cognitive": 98.5,
+        "finance": 99.2,
+        // ... other departments
+      }
+    },
+    "metrics": {
+      "commandsProcessed": 1234567,
+      "avgResponseTime": 12,
+      "successRate": 99.8
+    },
+    "timestamp": "2025-01-20T12:00:00Z"
+  }
+}</pre>
+            </div>
+        </section>
+
+        <!-- Webhooks -->
+        <section id="webhooks" class="endpoint-section">
+            <h2 class="gradient-text">Webhooks</h2>
+            <p>Configure webhooks to receive real-time notifications about system events.</p>
+            
+            <div class="endpoint-header">
+                <span class="method-badge method-post">POST</span>
+                <span class="endpoint-url">/webhooks</span>
+            </div>
+            
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre>POST /webhooks
+
+{
+  "url": "https://your-server.com/webhook",
+  "events": ["agent.status.changed", "command.completed", "system.alert"],
+  "secret": "your-webhook-secret"
+}
+
+// Webhook Payload Example
+{
+  "event": "command.completed",
+  "data": {
+    "commandId": "cmd_a1b2c3d4",
+    "agent": "copilot",
+    "result": "success",
+    "duration": 234
+  },
+  "timestamp": "2025-01-20T12:34:56Z",
+  "signature": "sha256=..."
+}</pre>
+            </div>
+        </section>
+
+        <!-- Rate Limits -->
+        <section class="endpoint-section">
+            <h2 class="gradient-text">Rate Limits</h2>
+            <p>API rate limits are enforced based on your authorization level.</p>
+            
+            <table class="param-table">
+                <tr>
+                    <th>Authorization Level</th>
+                    <th>Requests/Hour</th>
+                    <th>Burst Limit</th>
+                </tr>
+                <tr>
+                    <td>Founder Seal</td>
+                    <td>Unlimited</td>
+                    <td>Unlimited</td>
+                </tr>
+                <tr>
+                    <td>Tri-Command</td>
+                    <td>10,000</td>
+                    <td>100/minute</td>
+                </tr>
+                <tr>
+                    <td>Department</td>
+                    <td>1,000</td>
+                    <td>20/minute</td>
+                </tr>
+                <tr>
+                    <td>Standard</td>
+                    <td>100</td>
+                    <td>5/minute</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Navigation -->
+        <div style="text-align: center; margin-top: 60px;">
+            <a href="command-center.html" class="ag-button ag-button-primary">Back to Command Center</a>
+        </div>
+    </div>
+
+    <script src="assets/js/agentics-core.js"></script>
+    <script>
+        function copyCode(btn) {
+            const code = btn.nextElementSibling.textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                btn.textContent = 'Copied!';
+                setTimeout(() => {
+                    btn.textContent = 'Copy';
+                }, 2000);
+            });
+        }
+
+        function tryAPI(event) {
+            event.preventDefault();
+            const endpoint = document.getElementById('tryEndpoint').value;
+            const token = document.getElementById('tryToken').value;
+            const resultDiv = document.getElementById('tryResult');
+            
+            resultDiv.innerHTML = `
+                <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px;">
+                    <p style="color: #0f0;">✓ Request would be sent to: ${endpoint}</p>
+                    <p style="color: #888;">Note: This is a demo. In production, this would make a real API call.</p>
+                </div>
+            `;
+        }
+
+        // Smooth scroll to sections
+        document.querySelectorAll('.api-nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+    </script>
+</body>
+</html>
