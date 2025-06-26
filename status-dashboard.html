@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentics Status Dashboard - Live Metrics</title>
+    <link rel="stylesheet" href="assets/css/agentics-core.css">
+    <style>
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .status-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: rgba(0,255,0,0.1);
+            border: 1px solid #0f0;
+            border-radius: 30px;
+            margin-bottom: 20px;
+        }
+
+        .live-dot {
+            width: 10px;
+            height: 10px;
+            background: #0f0;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .metric-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--ag-cyan);
+            transform: scaleX(0);
+            animation: loading 2s ease-out forwards;
+        }
+
+        @keyframes loading {
+            to { transform: scaleX(1); }
+        }
+
+        .metric-title {
+            color: var(--ag-text-secondary);
+            font-size: 0.9em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .metric-value {
+            font-size: 3em;
+            font-weight: bold;
+            color: var(--ag-cyan);
+            margin-bottom: 10px;
+        }
+
+        .metric-change {
+            font-size: 0.9em;
+            color: #0f0;
+        }
+
+        .activity-feed {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 25px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .activity-time {
+            color: var(--ag-text-secondary);
+            font-size: 0.8em;
+        }
+
+        .system-chart {
+            height: 300px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 100%;
+            gap: 10px;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--ag-cyan), var(--ag-magenta));
+            border-radius: 5px 5px 0 0;
+            position: relative;
+            animation: grow 1s ease-out forwards;
+            transform-origin: bottom;
+        }
+
+        @keyframes grow {
+            from { transform: scaleY(0); }
+            to { transform: scaleY(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Header -->
+        <div class="status-header">
+            <div class="live-indicator">
+                <span class="live-dot"></span>
+                <span>Live System Status</span>
+            </div>
+            <h1 class="gradient-text">Agentics Operations Dashboard</h1>
+            <p style="color: var(--ag-text-secondary);">Real-time metrics and system health</p>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-title">Active Agents</div>
+                <div class="metric-value" id="activeAgents">51</div>
+                <div class="metric-change">↑ 100% operational</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-title">System Uptime</div>
+                <div class="metric-value" id="uptime">99.9%</div>
+                <div class="metric-change">↑ 0.1% from last month</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-title">Response Time</div>
+                <div class="metric-value" id="responseTime">12ms</div>
+                <div class="metric-change">↓ 3ms improvement</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-title">Commands Processed</div>
+                <div class="metric-value" id="commands">1.2M</div>
+                <div class="metric-change">↑ 15% this week</div>
+            </div>
+        </div>
+
+        <!-- Department Performance -->
+        <h2 class="gradient-text" style="margin: 40px 0 20px;">Department Performance</h2>
+        <div class="system-chart">
+            <div class="chart-bars">
+                <div class="chart-bar" style="height: 95%" data-dept="core"></div>
+                <div class="chart-bar" style="height: 88%" data-dept="cognitive"></div>
+                <div class="chart-bar" style="height: 92%" data-dept="finance"></div>
+                <div class="chart-bar" style="height: 90%" data-dept="governance"></div>
+                <div class="chart-bar" style="height: 94%" data-dept="academy"></div>
+                <div class="chart-bar" style="height: 91%" data-dept="design"></div>
+                <div class="chart-bar" style="height: 96%" data-dept="security"></div>
+                <div class="chart-bar" style="height: 89%" data-dept="interface"></div>
+                <div class="chart-bar" style="height: 93%" data-dept="civilization"></div>
+                <div class="chart-bar" style="height: 87%" data-dept="legacy"></div>
+                <div class="chart-bar" style="height: 90%" data-dept="broadcast"></div>
+            </div>
+        </div>
+
+        <!-- Activity Feed -->
+        <h2 class="gradient-text" style="margin: 40px 0 20px;">Recent Activity</h2>
+        <div class="activity-feed" id="activityFeed">
+            <div class="activity-item">
+                <span>🟢</span>
+                <div>
+                    <div>Copilot completed code optimization task</div>
+                    <div class="activity-time">2 minutes ago</div>
+                </div>
+            </div>
+            <div class="activity-item">
+                <span>🔄</span>
+                <div>
+                    <div>System backup completed successfully</div>
+                    <div class="activity-time">15 minutes ago</div>
+                </div>
+            </div>
+            <div class="activity-item">
+                <span>⚡</span>
+                <div>
+                    <div>Maxi deployed new update to production</div>
+                    <div class="activity-time">1 hour ago</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="command-center.html" class="ag-button ag-button-primary">Back to Command Center</a>
+        </div>
+    </div>
+
+    <script src="assets/js/agentics-core.js"></script>
+    <script>
+        // Simulate real-time updates
+        function updateMetrics() {
+            // Update response time
+            const responseTime = document.getElementById('responseTime');
+            const newTime = 10 + Math.floor(Math.random() * 5);
+            responseTime.textContent = newTime + 'ms';
+            
+            // Update commands
+            const commands = document.getElementById('commands');
+            const currentVal = parseFloat(commands.textContent);
+            commands.textContent = (currentVal + 0.001).toFixed(1) + 'M';
+            
+            // Add new activity
+            if (Math.random() > 0.8) {
+                addActivity();
+            }
+        }
+
+        function addActivity() {
+            const activities = [
+                { icon: '🟢', text: 'Agent health check passed' },
+                { icon: '🔍', text: 'Search index updated' },
+                { icon: '🛡️', text: 'Security scan completed' },
+                { icon: '📊', text: 'Analytics report generated' },
+                { icon: '🔄', text: 'Cache refreshed successfully' }
+            ];
+            
+            const activity = activities[Math.floor(Math.random() * activities.length)];
+            const feed = document.getElementById('activityFeed');
+            
+            const item = document.createElement('div');
+            item.className = 'activity-item';
+            item.innerHTML = `
+                <span>${activity.icon}</span>
+                <div>
+                    <div>${activity.text}</div>
+                    <div class="activity-time">Just now</div>
+                </div>
+            `;
+            
+            feed.insertBefore(item, feed.firstChild);
+            
+            // Remove old items
+            while (feed.children.length > 10) {
+                feed.removeChild(feed.lastChild);
+            }
+        }
+
+        // Update every 3 seconds
+        setInterval(updateMetrics, 3000);
+        
+        // Initial animation
+        setTimeout(() => {
+            document.querySelectorAll('.metric-value').forEach(el => {
+                el.style.animation = 'pulse 2s infinite';
+            });
+        }, 1000);
+    </script>
+</body>
+</html>
