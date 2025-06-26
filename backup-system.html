@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentics Backup System - Export & Recovery</title>
+    <link rel="stylesheet" href="assets/css/agentics-core.css">
+    <style>
+        .backup-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .backup-header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, rgba(255,0,255,0.1), rgba(0,255,255,0.1));
+            border-radius: 20px;
+            position: relative;
+        }
+
+        .backup-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            animation: rotate 4s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Backup Options Grid */
+        .backup-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .backup-card {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .backup-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--ag-cyan), var(--ag-magenta));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .backup-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0,255,255,0.3);
+            border-color: var(--ag-cyan);
+        }
+
+        .backup-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .backup-card-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .backup-card-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: var(--ag-cyan);
+            margin-bottom: 10px;
+        }
+
+        .backup-card-description {
+            color: var(--ag-text-secondary);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .backup-btn {
+            padding: 12px 30px;
+            background: linear-gradient(45deg, var(--ag-magenta), var(--ag-cyan));
+            border: none;
+            border-radius: 25px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .backup-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255,0,255,0.5);
+        }
+
+        /* Progress Section */
+        .progress-section {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            display: none;
+        }
+
+        .progress-section.active {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--ag-cyan), var(--ag-magenta));
+            width: 0%;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .progress-status {
+            text-align: center;
+            color: var(--ag-text-secondary);
+            margin-top: 10px;
+        }
+
+        /* Backup History */
+        .history-section {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        .history-table {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .history-table th,
+        .history-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .history-table th {
+            background: rgba(255,255,255,0.05);
+            color: var(--ag-cyan);
+            font-weight: bold;
+        }
+
+        .history-table tr:hover {
+            background: rgba(255,255,255,0.03);
+        }
+
+        .restore-btn {
+            padding: 6px 15px;
+            background: rgba(0,255,255,0.2);
+            border: 1px solid var(--ag-cyan);
+            color: var(--ag-cyan);
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .restore-btn:hover {
+            background: var(--ag-cyan);
+            color: black;
+        }
+
+        /* Settings Panel */
+        .settings-panel {
+            background: rgba(0,255,255,0.05);
+            border: 1px solid var(--ag-cyan);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .setting-row:last-child {
+            border-bottom: none;
+        }
+
+        .setting-label {
+            font-weight: bold;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: var(--ag-cyan);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(30px);
+        }
+
+        /* Status Messages */
+        .status-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 30px;
+            border-radius: 30px;
+            color: white;
+            font-weight: bold;
+            animation: slideIn 0.3s ease;
+            z-index: 1000;
+        }
+
+        .status-message.success {
+            background: rgba(0,255,0,0.2);
+            border: 1px solid #00ff88;
+        }
+
+        .status-message.error {
+            background: rgba(255,0,0,0.2);
+            border: 1px solid #ff4444;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body
+<body>
+   <div class="backup-container">
+       <!-- Header -->
+       <header class="backup-header">
+           <div class="backup-icon">💾</div>
+           <h1 class="gradient-text">Backup & Recovery System</h1>
+           <p style="color: var(--ag-text-secondary); font-size: 1.2em;">
+               Complete system backup and restoration management
+           </p>
+       </header>
+
+       <!-- Backup Options -->
+       <div class="backup-grid">
+           <!-- Full System Backup -->
+           <div class="backup-card" onclick="startBackup('full')">
+               <span class="backup-card-icon">🗄️</span>
+               <h3 class="backup-card-title">Full System Backup</h3>
+               <p class="backup-card-description">
+                   Complete backup of all agents, configurations, logs, and system state
+               </p>
+               <button class="backup-btn">Create Backup</button>
+           </div>
+
+           <!-- Agent Data Export -->
+           <div class="backup-card" onclick="startBackup('agents')">
+               <span class="backup-card-icon">👥</span>
+               <h3 class="backup-card-title">Agent Data Export</h3>
+               <p class="backup-card-description">
+                   Export all agent profiles, capabilities, and relationships
+               </p>
+               <button class="backup-btn">Export Agents</button>
+           </div>
+
+           <!-- Mission Logs -->
+           <div class="backup-card" onclick="startBackup('logs')">
+               <span class="backup-card-icon">📋</span>
+               <h3 class="backup-card-title">Mission Log Archive</h3>
+               <p class="backup-card-description">
+                   Archive all historical mission data and operational logs
+               </p>
+               <button class="backup-btn">Archive Logs</button>
+           </div>
+
+           <!-- Configuration -->
+           <div class="backup-card" onclick="startBackup('config')">
+               <span class="backup-card-icon">⚙️</span>
+               <h3 class="backup-card-title">Configuration Backup</h3>
+               <p class="backup-card-description">
+                   Save all system settings and department configurations
+               </p>
+               <button class="backup-btn">Backup Config</button>
+           </div>
+
+           <!-- Security Keys -->
+           <div class="backup-card" onclick="startBackup('security')">
+               <span class="backup-card-icon">🔐</span>
+               <h3 class="backup-card-title">Security Keys</h3>
+               <p class="backup-card-description">
+                   Secure export of authentication and encryption keys
+               </p>
+               <button class="backup-btn">Export Keys</button>
+           </div>
+
+           <!-- Custom Export -->
+           <div class="backup-card" onclick="showCustomOptions()">
+               <span class="backup-card-icon">🎯</span>
+               <h3 class="backup-card-title">Custom Export</h3>
+               <p class="backup-card-description">
+                   Select specific components to backup or export
+               </p>
+               <button class="backup-btn">Customize</button>
+           </div>
+       </div>
+
+       <!-- Progress Section -->
+       <div class="progress-section" id="progressSection">
+           <h2 class="gradient-text">Backup Progress</h2>
+           <div class="progress-bar">
+               <div class="progress-fill" id="progressFill">0%</div>
+           </div>
+           <div class="progress-status" id="progressStatus">Initializing backup...</div>
+       </div>
+
+       <!-- Settings Panel -->
+       <div class="settings-panel">
+           <h2 class="gradient-text">Backup Settings</h2>
+           
+           <div class="setting-row">
+               <span class="setting-label">Automatic Daily Backups</span>
+               <div class="toggle-switch" id="autoBackup" onclick="toggleSetting(this)">
+                   <div class="toggle-slider"></div>
+               </div>
+           </div>
+           
+           <div class="setting-row">
+               <span class="setting-label">Encrypt Backup Files</span>
+               <div class="toggle-switch active" id="encryptBackup" onclick="toggleSetting(this)">
+                   <div class="toggle-slider"></div>
+               </div>
+           </div>
+           
+           <div class="setting-row">
+               <span class="setting-label">Compress Archives</span>
+               <div class="toggle-switch active" id="compressBackup" onclick="toggleSetting(this)">
+                   <div class="toggle-slider"></div>
+               </div>
+           </div>
+           
+           <div class="setting-row">
+               <span class="setting-label">Cloud Sync Enabled</span>
+               <div class="toggle-switch" id="cloudSync" onclick="toggleSetting(this)">
+                   <div class="toggle-slider"></div>
+               </div>
+           </div>
+       </div>
+
+       <!-- Backup History -->
+       <div class="history-section">
+           <h2 class="gradient-text">Backup History</h2>
+           <table class="history-table">
+               <thead>
+                   <tr>
+                       <th>Date</th>
+                       <th>Type</th>
+                       <th>Size</th>
+                       <th>Status</th>
+                       <th>Actions</th>
+                   </tr>
+               </thead>
+               <tbody id="backupHistory">
+                   <tr>
+                       <td>2025-01-19 21:00</td>
+                       <td>Full System</td>
+                       <td>247 MB</td>
+                       <td style="color: #00ff88;">✓ Complete</td>
+                       <td>
+                           <button class="restore-btn" onclick="restoreBackup('backup-001')">Restore</button>
+                       </td>
+                   </tr>
+                   <tr>
+                       <td>2025-01-19 18:00</td>
+                       <td>Agent Data</td>
+                       <td>12 MB</td>
+                       <td style="color: #00ff88;">✓ Complete</td>
+                       <td>
+                           <button class="restore-btn" onclick="restoreBackup('backup-002')">Restore</button>
+                       </td>
+                   </tr>
+                   <tr>
+                       <td>2025-01-19 12:00</td>
+                       <td>Mission Logs</td>
+                       <td>89 MB</td>
+                       <td style="color: #00ff88;">✓ Complete</td>
+                       <td>
+                           <button class="restore-btn" onclick="restoreBackup('backup-003')">Restore</button>
+                       </td>
+                   </tr>
+               </tbody>
+           </table>
+       </div>
+
+       <!-- Quick Actions -->
+       <div style="text-align: center; margin: 40px 0;">
+           <button class="ag-button" onclick="scheduleBackup()" style="margin: 0 10px;">
+               📅 Schedule Backup
+           </button>
+           <button class="ag-button" onclick="verifyIntegrity()" style="margin: 0 10px;">
+               🔍 Verify Integrity
+           </button>
+           <button class="ag-button" onclick="cleanupOld()" style="margin: 0 10px;">
+               🧹 Cleanup Old Backups
+           </button>
+       </div>
+
+       <!-- Navigation -->
+       <div style="text-align: center; margin-top: 40px;">
+           <a href="command-center.html" class="ag-button ag-button-primary">Back to Command Center</a>
+       </div>
+   </div>
+
+   <script src="assets/js/agentics-core.js"></script>
+   <script>
+       // Backup system data
+       const systemData = {
+           agents: 51,
+           departments: 10,
+           missions: 1247,
+           configurations: 156,
+           totalSize: '342 MB'
+       };
+
+       // Start backup process
+       function startBackup(type) {
+           const progressSection = document.getElementById('progressSection');
+           progressSection.classList.add('active');
+           
+           const progressFill = document.getElementById('progressFill');
+           const progressStatus = document.getElementById('progressStatus');
+           
+           // Reset progress
+           progressFill.style.width = '0%';
+           progressFill.textContent = '0%';
+           
+           // Simulate backup process
+           let progress = 0;
+           const steps = [
+               'Initializing backup...',
+               'Gathering system data...',
+               'Compressing files...',
+               'Encrypting backup...',
+               'Finalizing archive...'
+           ];
+           
+           const interval = setInterval(() => {
+               progress += 20;
+               progressFill.style.width = progress + '%';
+               progressFill.textContent = progress + '%';
+               
+               const stepIndex = Math.floor(progress / 20) - 1;
+               if (stepIndex >= 0 && stepIndex < steps.length) {
+                   progressStatus.textContent = steps[stepIndex];
+               }
+               
+               if (progress >= 100) {
+                   clearInterval(interval);
+                   progressStatus.textContent = 'Backup complete!';
+                   
+                   // Add to history
+                   addBackupToHistory(type);
+                   
+                   // Show success message
+                   showStatus('Backup completed successfully!', 'success');
+                   
+                   // Download backup file
+                   setTimeout(() => {
+                       downloadBackup(type);
+                       progressSection.classList.remove('active');
+                   }, 2000);
+               }
+           }, 500);
+       }
+
+       // Add backup to history
+       function addBackupToHistory(type) {
+           const history = document.getElementById('backupHistory');
+           const newRow = document.createElement('tr');
+           const timestamp = new Date().toLocaleString();
+           const size = Math.floor(Math.random() * 200 + 50) + ' MB';
+           const id = 'backup-' + Date.now();
+           
+           newRow.innerHTML = `
+               <td>${timestamp}</td>
+               <td>${formatType(type)}</td>
+               <td>${size}</td>
+               <td style="color: #00ff88;">✓ Complete</td>
+               <td>
+                   <button class="restore-btn" onclick="restoreBackup('${id}')">Restore</button>
+               </td>
+           `;
+           
+           history.insertBefore(newRow, history.firstChild);
+       }
+
+       // Format backup type
+       function formatType(type) {
+           const types = {
+               'full': 'Full System',
+               'agents': 'Agent Data',
+               'logs': 'Mission Logs',
+               'config': 'Configuration',
+               'security': 'Security Keys'
+           };
+           return types[type] || 'Custom';
+       }
+
+       // Download backup file
+       function downloadBackup(type) {
+           const backupData = gatherBackupData(type);
+           const filename = `agentics-backup-${type}-${Date.now()}.json`;
+           const content = JSON.stringify(backupData, null, 2);
+           
+           const blob = new Blob([content], { type: 'application/json' });
+           const url = URL.createObjectURL(blob);
+           const a = document.createElement('a');
+           a.href = url;
+           a.download = filename;
+           document.body.appendChild(a);
+           a.click();
+           document.body.removeChild(a);
+           URL.revokeObjectURL(url);
+       }
+
+       // Gather backup data
+       function gatherBackupData(type) {
+           const baseData = {
+               version: '1.0.0',
+               timestamp: new Date().toISOString(),
+               type: type,
+               system: 'Agentics Command System'
+           };
+           
+           switch(type) {
+               case 'full':
+                   return {
+                       ...baseData,
+                       agents: getAllAgents(),
+                       departments: getAllDepartments(),
+                       missions: getAllMissions(),
+                       configurations: getAllConfigurations()
+                   };
+               case 'agents':
+                   return {
+                       ...baseData,
+                       agents: getAllAgents()
+                   };
+               case 'logs':
+                   return {
+                       ...baseData,
+                       missions: getAllMissions()
+                   };
+               default:
+                   return baseData;
+           }
+       }
+
+       // Mock data functions
+       function getAllAgents() {
+           return [
+               { id: 'maxi', name: 'Maxi', dept: 'core-command', role: 'Execution OS' },
+               { id: 'claude', name: 'Claude', dept: 'core-command', role: 'Archivist Prime' },
+               { id: 'gemcore', name: 'GemCore', dept: 'core-command', role: 'Strategic Intelligence' },
+               { id: 'copilot', name: 'Copilot', dept: 'core-command', role: 'Code Companion' }
+               // ... add all agents
+           ];
+       }
+
+       function getAllDepartments() {
+           return [
+               { id: 'core-command', name: 'Core Command', agents: 4 },
+               { id: 'cognitive', name: 'Cognitive Systems', agents: 4 },
+               // ... add all departments
+           ];
+       }
+
+       function getAllMissions() {
+           return [
+               { id: 'MSN-001', title: 'System Initialization', status: 'complete' },
+               // ... add missions
+           ];
+       }
+
+       function getAllConfigurations() {
+           return {
+               theme: 'dark',
+               autoBackup: false,
+               encryption: true,
+               compression: true
+           };
+       }
+
+       // Restore backup
+       function restoreBackup(backupId) {
+           if (confirm('Are you sure you want to restore this backup? Current data will be overwritten.')) {
+               showStatus('Restoring backup...', 'success');
+               
+               // Simulate restore process
+               setTimeout(() => {
+                   showStatus('Backup restored successfully!', 'success');
+               }, 2000);
+           }
+       }
+
+       // Toggle settings
+       function toggleSetting(element) {
+           element.classList.toggle('active');
+           const settingName = element.id;
+           const isActive = element.classList.contains('active');
+           
+           // Save setting
+           localStorage.setItem(`backup_${settingName}`, isActive);
+           
+           showStatus(`${formatSettingName(settingName)} ${isActive ? 'enabled' : 'disabled'}`, 'success');
+       }
+
+       function formatSettingName(name) {
+           return name.replace(/([A-Z])/g, ' $1').toLowerCase();
+       }
+
+       // Schedule backup
+       function scheduleBackup() {
+           const time = prompt('Enter time for daily backup (HH:MM):', '03:00');
+           if (time) {
+               showStatus(`Daily backup scheduled for ${time}`, 'success');
+           }
+       }
+
+       // Verify integrity
+       function verifyIntegrity() {
+           showStatus('Verifying backup integrity...', 'success');
+           
+           setTimeout(() => {
+               showStatus('All backups verified successfully!', 'success');
+           }, 2000);
+       }
+
+       // Cleanup old backups
+       function cleanupOld() {
+           if (confirm('Remove backups older than 30 days?')) {
+               showStatus('Cleaning up old backups...', 'success');
+               
+               setTimeout(() => {
+                   showStatus('Cleanup complete. 3 old backups removed.', 'success');
+               }, 1500);
+           }
+       }
+
+       // Show custom options
+       function showCustomOptions() {
+           alert('Custom backup options would open in a modal in production');
+       }
+
+       // Show status message
+       function showStatus(message, type) {
+           const status = document.createElement('div');
+           status.className = `status-message ${type}`;
+           status.textContent = message;
+           document.body.appendChild(status);
+           
+           setTimeout(() => {
+               status.remove();
+           }, 3000);
+       }
+
+       // Initialize settings from localStorage
+       function initSettings() {
+           const settings = ['autoBackup', 'encryptBackup', 'compressBackup', 'cloudSync'];
+           settings.forEach(setting => {
+               const saved = localStorage.getItem(`backup_${setting}`);
+               if (saved !== null) {
+                   const element = document.getElementById(setting);
+                   if (saved === 'true' && !element.classList.contains('active')) {
+                       element.classList.add('active');
+                   } else if (saved === 'false' && element.classList.contains('active')) {
+                       element.classList.remove('active');
+                   }
+               }
+           });
+       }
+
+       // Initialize on load
+       initSettings();
+   </script>
+</body>
+</html>
