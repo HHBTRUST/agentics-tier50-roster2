@@ -1,0 +1,167 @@
+/* Agentics Core Styles v1.0.0 */
+/* Shared across all Agentics pages */
+
+:root {
+    /* Core Colors */
+    --ag-black: #0a0a0a;
+    --ag-white: #ffffff;
+    --ag-cyan: #00ffff;
+    --ag-magenta: #ff00ff;
+    --ag-blue: #0080ff;
+    
+    /* Semantic Colors */
+    --ag-bg-primary: var(--ag-black);
+    --ag-bg-secondary: rgba(255, 255, 255, 0.03);
+    --ag-bg-hover: rgba(255, 255, 255, 0.05);
+    --ag-text-primary: var(--ag-white);
+    --ag-text-secondary: #888888;
+    --ag-border: rgba(255, 255, 255, 0.1);
+    
+    /* Department Colors */
+    --dept-cognitive: #00ff88;
+    --dept-finance: #ffaa00;
+    --dept-governance: #ff0088;
+    --dept-academy: #00aaff;
+    --dept-design: #ff00ff;
+    --dept-security: #ff4444;
+    --dept-interface: #00ffff;
+    --dept-civilization: #8800ff;
+    --dept-legacy: #888888;
+    --dept-broadcast: #00ff00;
+    
+    /* Spacing */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 2rem;
+    --space-xl: 4rem;
+    
+    /* Animation */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+}
+
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Base Styles */
+body {
+    background: var(--ag-bg-primary);
+    color: var(--ag-text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* Gradient Text */
+.gradient-text {
+    background: linear-gradient(45deg, var(--ag-cyan), var(--ag-magenta));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Glow Effects */
+.glow-cyan {
+    text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+}
+
+.glow-magenta {
+    text-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+}
+
+/* Card Styles */
+.ag-card {
+    background: var(--ag-bg-secondary);
+    border: 1px solid var(--ag-border);
+    border-radius: 15px;
+    padding: var(--space-lg);
+    transition: var(--transition-normal);
+}
+
+.ag-card:hover {
+    background: var(--ag-bg-hover);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 255, 255, 0.2);
+}
+
+/* Button Styles */
+.ag-button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-lg);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--ag-border);
+    border-radius: 25px;
+    color: var(--ag-text-primary);
+    text-decoration: none;
+    transition: var(--transition-normal);
+    cursor: pointer;
+}
+
+.ag-button:hover {
+    background: rgba(0, 255, 255, 0.1);
+    border-color: var(--ag-cyan);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+}
+
+.ag-button-primary {
+    background: linear-gradient(45deg, var(--ag-magenta), var(--ag-cyan));
+    border: none;
+    font-weight: bold;
+}
+
+.ag-button-primary:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(255, 0, 255, 0.5);
+}
+
+/* Grid Layouts */
+.ag-grid {
+    display: grid;
+    gap: var(--space-lg);
+}
+
+.ag-grid-auto {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+/* Animations */
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.1); }
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes glow {
+    from { filter: drop-shadow(0 0 20px currentColor); }
+    to { filter: drop-shadow(0 0 40px currentColor); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    :root {
+        font-size: 14px;
+    }
+    
+    .ag-grid-auto {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Utility Classes */
+.text-center { text-align: center; }
+.mt-1 { margin-top: var(--space-sm); }
+.mt-2 { margin-top: var(--space-md); }
+.mt-3 { margin-top: var(--space-lg); }
+.mt-4 { margin-top: var(--space-xl); }
