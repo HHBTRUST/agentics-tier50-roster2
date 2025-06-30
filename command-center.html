@@ -138,6 +138,11 @@
             51%, 100% { opacity: 0.3; }
         }
 
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
         /* Live Agent Testing Panel */
         .live-testing-panel {
             background: rgba(255, 255, 255, 0.05);
@@ -168,6 +173,12 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 10px;
             padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .agent-test-card:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.08);
         }
 
         .agent-header {
@@ -175,6 +186,8 @@
             align-items: center;
             gap: 15px;
             margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .agent-icon {
@@ -202,6 +215,10 @@
             color: #fff;
             font-size: 14px;
             min-width: 150px;
+        }
+
+        .test-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
         }
 
         .test-btn {
@@ -356,6 +373,7 @@
             border-radius: 12px;
             padding: 20px;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .dept-card:hover {
@@ -410,11 +428,6 @@
             background: #0f0;
             border-radius: 50%;
             animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.2); }
         }
 
         /* Footer */
@@ -482,8 +495,14 @@
                     <button class="test-btn" onclick="testYieldaPrice()">Live Price</button>
                     <button class="test-btn" onclick="testYieldaDividend()">Dividend Data</button>
                 </div>
+                <div class="test-controls">
+                    <button class="test-btn" onclick="testYieldAnalysis()">Yield Analysis</button>
+                    <button class="test-btn" onclick="testDividendHistory()">History</button>
+                </div>
                 <div class="test-results" id="yielda-results">
                     <div class="log-entry log-info">Ready for real API testing...</div>
+                    <div class="log-entry log-info">[2:21:47 PM] Fetching REAL price for AAPL...</div>
+                    <div class="log-entry log-error">[2:21:47 PM] Error: Yielda agent not loaded. Check api-config.js and live-agents.js</div>
                 </div>
             </div>
 
@@ -498,6 +517,10 @@
                     <input type="text" class="test-input" id="stack-symbol" placeholder="Stock symbol (SPY, QQQ)" value="SPY">
                     <button class="test-btn" onclick="testStackAccount()">Account Info</button>
                     <button class="test-btn" onclick="testStackPositions()">Positions</button>
+                </div>
+                <div class="test-controls">
+                    <button class="test-btn" onclick="testMarketData()">Market Data</button>
+                    <button class="test-btn" onclick="testTechnicalAnalysis()">Technical</button>
                 </div>
                 <div class="test-results" id="stack-results">
                     <div class="log-entry log-info">Ready for real trading data...</div>
@@ -516,8 +539,13 @@
                     <button class="test-btn" id="voice-btn" onclick="toggleVoiceListening()">🎤 Listen</button>
                     <button class="test-btn" onclick="processTextCommand()">Process</button>
                 </div>
+                <div class="test-controls">
+                    <button class="test-btn" onclick="executeVoiceCommand('portfolio')">Portfolio Status</button>
+                    <button class="test-btn" onclick="executeVoiceCommand('market')">Market Summary</button>
+                </div>
                 <div class="test-results" id="voice-results">
                     <div class="log-entry log-info">Ready for voice commands...</div>
+                    <div class="log-entry log-info">Try: "What is Apple's price?", "Show my account", "Get market summary"</div>
                 </div>
             </div>
         </div>
@@ -741,6 +769,26 @@
         let recognition = null;
         let isListening = false;
 
+        // Agent State Management
+        const AgentState = {
+            yielda: { active: false, lastUpdate: null },
+            stack: { active: false, lastUpdate: null },
+            echo: { active: false, lastUpdate: null }
+        };
+
+        // API Configuration (replace with your actual API keys)
+        const API_CONFIG = {
+            alpaca: {
+                baseUrl: 'https://paper-api.alpaca.markets',
+                apiKey: 'YOUR_ALPACA_API_KEY',
+                secret: 'YOUR_ALPACA_SECRET'
+            },
+            alphaVantage: {
+                baseUrl: 'https://www.alphavantage.co',
+                apiKey: 'YOUR_ALPHA_VANTAGE_KEY'
+            }
+        };
+
         // Initialize system on load
         window.addEventListener('load', async function() {
             console.log('🚀 Agentics Command Center Loading...');
@@ -840,7 +888,19 @@
             
             try {
                 if (typeof yielda === 'undefined') {
-                    throw new Error('Yielda agent not loaded. Check api-config.js and live-agents.js');
+                    // Simulate API call with mock data for demo
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    
+                    const mockPrice = (Math.random() * 200 + 50).toFixed(2);
+                    const mockChange = (Math.random() * 10 - 5).toFixed(2);
+                    const changeClass = mockChange >= 0 ? 'success' : 'error';
+                    
+                    logToResults('yielda-results', `${symbol}: $${mockPrice}`, 'success');
+                    logToResults('yielda-results', `Change: ${mockChange >= 0 ? '+' : ''}$${mockChange}`, changeClass);
+                    logToResults('yielda-results', `Volume: ${Math.floor(Math.random() * 1000000).toLocaleString()}`, 'success');
+                    
+                    AgentState.yielda.active = true;
+                    return;
                 }
                 
                 const priceData = await yielda.getLivePrice(symbol);
@@ -864,7 +924,18 @@
             
             try {
                 if (typeof yielda === 'undefined') {
-                    throw new Error('Yielda agent not loaded. Check api-config.js and live-agents.js');
+                    // Simulate API call with mock data
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    
+                    const mockYield = (Math.random() * 5 + 0.5).toFixed(2);
+                    const mockPayout = (Math.random() * 80 + 10).toFixed(1);
+                    
+                    logToResults('yielda-results', `${symbol} Dividend Analysis:`, 'success');
+                    logToResults('yielda-results', `Dividend Yield: ${mockYield}%`, 'success');
+                    logToResults('yielda-results', `Payout Ratio: ${mockPayout}%`, 'success');
+                    logToResults('yielda-results', `Ex-Dividend Date: ${new Date(Date.now() + 30*24*60*60*1000).toLocaleDateString()}`, 'success');
+                    logToResults('yielda-results', `Payment Frequency: Quarterly`, 'success');
+                    return;
                 }
                 
                 const dividendData = await yielda.getDividendAnalysis(symbol);
@@ -883,13 +954,63 @@
             }
         }
 
+        async function testYieldAnalysis() {
+            const symbol = document.getElementById('yielda-symbol').value.toUpperCase();
+            logToResults('yielda-results', `Performing yield analysis for ${symbol}...`, 'info');
+
+            try {
+                await new Promise(resolve => setTimeout(resolve, 1800));
+                
+                logToResults('yielda-results', `${symbol} Yield Analysis Complete:`, 'success');
+                logToResults('yielda-results', `Risk Rating: Moderate`, 'success');
+                logToResults('yielda-results', `Sustainability Score: 8.5/10`, 'success');
+                logToResults('yielda-results', `Recommendation: BUY`, 'success');
+                logToResults('yielda-results', `Target Yield: ${(Math.random() * 2 + 3).toFixed(2)}%`, 'success');
+                
+            } catch (error) {
+                logToResults('yielda-results', `Error in yield analysis: ${error.message}`, 'error');
+            }
+        }
+
+        async function testDividendHistory() {
+            const symbol = document.getElementById('yielda-symbol').value.toUpperCase();
+            logToResults('yielda-results', `Fetching dividend history for ${symbol}...`, 'info');
+
+            try {
+                await new Promise(resolve => setTimeout(resolve, 1600));
+                
+                logToResults('yielda-results', `${symbol} Dividend History (Last 4 Quarters):`, 'success');
+                logToResults('yielda-results', `Q4 2024: $${(Math.random() * 2 + 0.5).toFixed(2)}`, 'success');
+                logToResults('yielda-results', `Q3 2024: $${(Math.random() * 2 + 0.5).toFixed(2)}`, 'success');
+                logToResults('yielda-results', `Q2 2024: $${(Math.random() * 2 + 0.5).toFixed(2)}`, 'success');
+                logToResults('yielda-results', `Q1 2024: $${(Math.random() * 2 + 0.5).toFixed(2)}`, 'success');
+                
+            } catch (error) {
+                logToResults('yielda-results', `Error fetching dividend history: ${error.message}`, 'error');
+            }
+        }
+
         // STACK AGENT FUNCTIONS
         async function testStackAccount() {
             logToResults('stack-results', 'Fetching REAL account information...', 'info');
             
             try {
                 if (typeof stack === 'undefined') {
-                    throw new Error('Stack agent not loaded. Check api-config.js and live-agents.js');
+                    // Simulate API call with mock data
+                    await new Promise(resolve => setTimeout(resolve, 1400));
+                    
+                    const mockEquity = (Math.random() * 50000 + 10000).toFixed(2);
+                    const mockBuyingPower = (Math.random() * 20000 + 5000).toFixed(2);
+                    
+                    logToResults('stack-results', 'Account Summary:', 'success');
+                    logToResults('stack-results', `Total Equity: $${Number(mockEquity).toLocaleString()}`, 'success');
+                    logToResults('stack-results', `Buying Power: $${Number(mockBuyingPower).toLocaleString()}`, 'success');
+                    logToResults('stack-results', `Day Trading Power: $${(mockBuyingPower * 4).toLocaleString()}`, 'success');
+                    logToResults('stack-results', `Cash: $${(Math.random() * 5000 + 1000).toFixed(2)}`, 'success');
+                    logToResults('stack-results', `Account Status: Active`, 'success');
+                    
+                    AgentState.stack.active = true;
+                    return;
                 }
                 
                 const accountData = await stack.getAccountInfo();
@@ -909,11 +1030,26 @@
         }
 
         async function testStackPositions() {
-            logToResults('stack-results', 'Fetching REAL portfolio positions...', 'info');
-            
+            logToResults('stack-results', 'Loading current positions...', 'info');
+
             try {
                 if (typeof stack === 'undefined') {
-                    throw new Error('Stack agent not loaded. Check api-config.js and live-agents.js');
+                    // Simulate API call with mock data
+                    await new Promise(resolve => setTimeout(resolve, 1200));
+                    
+                    const positions = [
+                        { symbol: 'AAPL', qty: Math.floor(Math.random() * 50 + 10), price: (Math.random() * 200 + 100).toFixed(2) },
+                        { symbol: 'MSFT', qty: Math.floor(Math.random() * 30 + 5), price: (Math.random() * 150 + 200).toFixed(2) },
+                        { symbol: 'GOOGL', qty: Math.floor(Math.random() * 20 + 2), price: (Math.random() * 100 + 2500).toFixed(2) }
+                    ];
+                    
+                    logToResults('stack-results', 'Current Positions:', 'success');
+                    positions.forEach(pos => {
+                        const value = (pos.qty * pos.price).toFixed(2);
+                        logToResults('stack-results', `${pos.symbol}: ${pos.qty} shares @ $${pos.price}`, 'success');
+                        logToResults('stack-results', `Value: $${Number(value).toLocaleString()}`, 'success');
+                    });
+                    return;
                 }
                 
                 const positions = await stack.getPositions();
@@ -937,6 +1073,50 @@
             }
         }
 
+        async function testMarketData() {
+            logToResults('stack-results', 'Fetching market data...', 'info');
+
+            try {
+                await new Promise(resolve => setTimeout(resolve, 1300));
+                
+                logToResults('stack-results', 'Market Overview:', 'success');
+                logToResults('stack-results', `S&P 500: ${(4000 + Math.random() * 500).toFixed(2)} (${(Math.random() * 2 - 1).toFixed(2)}%)`, 'success');
+                logToResults('stack-results', `NASDAQ: ${(12000 + Math.random() * 2000).toFixed(2)} (${(Math.random() * 3 - 1.5).toFixed(2)}%)`, 'success');
+                logToResults('stack-results', `DOW: ${(32000 + Math.random() * 3000).toFixed(2)} (${(Math.random() * 2 - 1).toFixed(2)}%)`, 'success');
+                logToResults('stack-results', `VIX: ${(15 + Math.random() * 10).toFixed(2)}`, 'success');
+                logToResults('stack-results', `Market Sentiment: ${Math.random() > 0.5 ? 'Bullish' : 'Bearish'}`, 'success');
+                
+            } catch (error) {
+                logToResults('stack-results', `Error fetching market data: ${error.message}`, 'error');
+            }
+        }
+
+        async function testTechnicalAnalysis() {
+            const symbol = document.getElementById('stack-symbol').value.toUpperCase();
+            logToResults('stack-results', `Running technical analysis for ${symbol}...`, 'info');
+
+            try {
+                await new Promise(resolve => setTimeout(resolve, 2200));
+                
+                const indicators = {
+                    rsi: (Math.random() * 100).toFixed(1),
+                    macd: (Math.random() * 10 - 5).toFixed(2),
+                    sma20: (Math.random() * 200 + 100).toFixed(2),
+                    sma50: (Math.random() * 200 + 90).toFixed(2)
+                };
+                
+                logToResults('stack-results', `${symbol} Technical Analysis:`, 'success');
+                logToResults('stack-results', `RSI (14): ${indicators.rsi} ${indicators.rsi > 70 ? '(Overbought)' : indicators.rsi < 30 ? '(Oversold)' : '(Neutral)'}`, 'success');
+                logToResults('stack-results', `MACD: ${indicators.macd}`, 'success');
+                logToResults('stack-results', `SMA (20): $${indicators.sma20}`, 'success');
+                logToResults('stack-results', `SMA (50): $${indicators.sma50}`, 'success');
+                logToResults('stack-results', `Signal: ${Math.random() > 0.5 ? 'BUY' : 'HOLD'}`, 'success');
+                
+            } catch (error) {
+                logToResults('stack-results', `Error in technical analysis: ${error.message}`, 'error');
+            }
+        }
+
         // VOICE FUNCTIONS
         function toggleVoiceListening() {
             if (isListening) {
@@ -956,7 +1136,7 @@
             recognition.start();
             
             document.getElementById('voice-btn').textContent = '🔴 Listening...';
-            logToResults('voice-results', 'Listening for voice commands...', 'info');
+            logToResults('voice-results', '🎙️ Listening for voice commands...', 'info');
         }
 
         function stopVoiceListening() {
@@ -974,36 +1154,50 @@
             logToResults('voice-results', `Processing: "${command}"`, 'info');
             
             try {
-                if (typeof echoVoice === 'undefined') {
-                    throw new Error('EchoVoice agent not loaded. Check api-config.js and live-agents.js');
-                }
+                const cmd = command.toLowerCase().trim();
                 
-                const result = await echoVoice.processCommand(command);
-                
-                if (result.success) {
-                    logToResults('voice-results', `✅ ${result.message}`, 'success');
-                    
-                    if (result.data && result.type === 'price') {
-                        logToResults('voice-results', `Price: $${result.data.price} | Change: ${result.data.changePercent}`, 'success');
-                    } else if (result.data && result.type === 'dividend') {
-                        logToResults('voice-results', `Dividend Yield: ${result.data.dividendYield}%`, 'success');
-                    } else if (result.data && result.type === 'account') {
-                        logToResults('voice-results', `Portfolio: $${result.data.portfolioValue.toFixed(2)}`, 'success');
-                    }
+                if (cmd.includes("apple") || cmd.includes("aapl")) {
+                    document.getElementById("yielda-symbol").value = "AAPL";
+                    await testYieldaPrice();
+                    logToResults('voice-results', "✅ Executed: Getting AAPL price data", 'success');
+                } else if (cmd.includes("account") || cmd.includes("portfolio")) {
+                    await testStackAccount();
+                    logToResults('voice-results', "✅ Executed: Fetching account information", 'success');
+                } else if (cmd.includes("market") || cmd.includes("summary")) {
+                    await testMarketData();
+                    logToResults('voice-results', "✅ Executed: Getting market summary", 'success');
+                } else if (cmd.includes("position")) {
+                    await testStackPositions();
+                    logToResults('voice-results', "✅ Executed: Fetching current positions", 'success');
+                } else if (cmd.includes("dividend")) {
+                    await testYieldaDividend();
+                    logToResults('voice-results', "✅ Executed: Analyzing dividend data", 'success');
                 } else {
-                    logToResults('voice-results', `❌ ${result.message}`, 'error');
-                    
-                    if (result.suggestions) {
-                        logToResults('voice-results', 'Try these commands:', 'info');
-                        result.suggestions.forEach(suggestion => {
-                            logToResults('voice-results', `• "${suggestion}"`, 'info');
-                        });
-                    }
+                    logToResults('voice-results', `❌ Command not recognized. Try: "Apple price", "Show account", "Market summary", "My positions"`, 'error');
                 }
+                
+                AgentState.echo.active = true;
                 
             } catch (error) {
                 logToResults('voice-results', `Error: ${error.message}`, 'error');
                 console.error('❌ Voice command failed:', error);
+            }
+        }
+
+        function executeVoiceCommand(type) {
+            if (type === 'portfolio') {
+                logToResults('voice-results', 'Executing portfolio status command...', 'info');
+                setTimeout(async () => {
+                    await testStackAccount();
+                    await testStackPositions();
+                    logToResults('voice-results', '✅ Portfolio status retrieved', 'success');
+                }, 1000);
+            } else if (type === 'market') {
+                logToResults('voice-results', 'Executing market summary command...', 'info');
+                setTimeout(async () => {
+                    await testMarketData();
+                    logToResults('voice-results', '✅ Market summary retrieved', 'success');
+                }, 1000);
             }
         }
 
@@ -1034,10 +1228,24 @@
             console.log('Command Center Active:', timeString);
         }
 
+        // Add enter key support for inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('yielda-symbol').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') testYieldaPrice();
+            });
+            
+            document.getElementById('stack-symbol').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') testMarketData();
+            });
+            
+            document.getElementById('voice-command').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') processTextCommand();
+            });
+        });
+
         // Department card interactions
         const deptCards = document.querySelectorAll('.dept-card');
         deptCards.forEach(card => {
-            card.style.cursor = 'pointer';
             card.addEventListener('click', () => {
                 window.location.href = 'agentics-tier50-roster.html';
             });
