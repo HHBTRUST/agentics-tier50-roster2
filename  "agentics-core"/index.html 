@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentics Core - Live Wealth System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- HEADER -->
+    <div class="header">
+        <h1>AGENTICS CORE</h1>
+        <div class="status" id="system-status">🔴 OFFLINE</div>
+    </div>
+    
+    <!-- MAIN CONTROLS -->
+    <div class="main-grid">
+        <!-- MARKET DATA PANEL -->
+        <div class="panel">
+            <h2>📊 LIVE MARKET</h2>
+            <div class="controls">
+                <input type="text" id="symbol-input" placeholder="AAPL" value="AAPL">
+                <button onclick="getPrice()" class="btn-primary">GET PRICE</button>
+                <button onclick="getDividend()" class="btn-secondary">DIVIDEND</button>
+            </div>
+            <div class="price-display" id="price-display">
+                Enter symbol above
+            </div>
+            <div class="log" id="market-log"></div>
+        </div>
+        
+        <!-- TRADING PANEL -->
+        <div class="panel">
+            <h2>⚡ EXECUTE TRADES</h2>
+            <div class="controls">
+                <input type="text" id="trade-symbol" placeholder="AAPL" value="AAPL">
+                <input type="number" id="trade-qty" placeholder="10" value="10">
+            </div>
+            <div class="controls">
+                <button onclick="buyStock()" class="btn-buy">BUY</button>
+                <button onclick="sellStock()" class="btn-sell">SELL</button>
+                <button onclick="showAccount()" class="btn-info">ACCOUNT</button>
+            </div>
+            <div class="log" id="trade-log"></div>
+        </div>
+    </div>
+    
+    <!-- PORTFOLIO PANEL -->
+    <div class="panel portfolio">
+        <h2>💰 PORTFOLIO</h2>
+        <div class="portfolio-value" id="portfolio-value">$10,000.00</div>
+        <div class="positions" id="positions-grid">
+            <!-- Positions will appear here -->
+        </div>
+        <div class="log" id="portfolio-log"></div>
+    </div>
+    
+    <!-- LOAD SCRIPTS -->
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+/* RESET AND BASE */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #000;
+    color: #0f0;
+    font-family: 'Courier New', monospace;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* HEADER */
+.header {
+    text-align: center;
+    padding: 20px 0;
+    border-bottom: 2px solid #0f0;
+    margin-bottom: 30px;
+}
+
+h1 {
+    font-size: 2.5em;
+    color: #0f0;
+    text-shadow: 0 0 10px #0f0;
+    margin-bottom: 10px;
+}
+
+.status {
+    font-size: 1.2em;
+    padding: 10px;
+    border: 1px solid #0f0;
+    display: inline-block;
+    background: rgba(0, 255, 0, 0.1);
+}
+
+/* MAIN LAYOUT */
+.main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto 30px auto;
+}
+
+.panel {
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid #0f0;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.panel h2 {
+    color: #0f0;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    font-size: 1.2em;
+}
+
+/* CONTROLS */
+.controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+input {
+    background: #000;
+    border: 1px solid #0f0;
+    color: #0f0;
+    padding: 10px;
+    flex: 1;
+    min-width: 100px;
+}
+
+input:focus {
+    outline: none;
+    box-shadow: 0 0 5px #0f0;
+}
+
+/* BUTTONS */
+button {
+    background: #000;
+    border: 1px solid #0f0;
+    color: #0f0;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+    text-transform: uppercase;
+}
+
+button:hover {
+    background: #0f0;
+    color: #000;
+    box-shadow: 0 0 10px #0f0;
+}
+
+.btn-primary { border-color: #00f; color: #00f; }
+.btn-primary:hover { background: #00f; color: #fff; }
+
+.btn-secondary { border-color: #ff0; color: #ff0; }
+.btn-secondary:hover { background: #ff0; color: #000; }
+
+.btn-buy { border-color: #0f0; color: #0f0; }
+.btn-buy:hover { background: #0f0; color: #000; }
+
+.btn-sell { border-color: #f00; color: #f00; }
+.btn-sell:hover { background: #f00; color: #fff; }
+
+.btn-info { border-color: #0ff; color: #0ff; }
+.btn-info:hover { background: #0ff; color: #000; }
+
+/* PRICE DISPLAY */
+.price-display {
+    font-size: 1.8em;
+    text-align: center;
+    margin: 20px 0;
+    padding: 15px;
+    border: 1px solid #333;
+    background: rgba(0, 255, 0, 0.05);
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+/* PORTFOLIO */
+.portfolio {
+    grid-column: 1 / -1;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.portfolio-value {
+    font-size: 3em;
+    text-align: center;
+    color: #0f0;
+    text-shadow: 0 0 20px #0f0;
+    margin: 20px 0;
+    padding: 20px;
+    border: 2px solid #0f0;
+    background: rgba(0, 255, 0, 0.1);
+}
+
+.positions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.position {
+    background: rgba(0, 255, 0, 0.1);
+    border: 1px solid #0f0;
+    padding: 15px;
+    text-align: center;
+}
+
+.position .symbol {
+    font-size: 1.3em;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.position .quantity {
+    font-size: 0.9em;
+    opacity: 0.8;
+    margin-bottom: 5px;
+}
+
+.position .value {
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+.position .pnl {
+    font-size: 1em;
+    font-weight: bold;
+}
+
+.profit { color: #0f0; }
+.loss { color: #f00; }
+
+/* LOG AREAS */
+.log {
+    background: rgba(0, 0, 0, 0.9);
+    border: 1px solid #333;
+    height: 150px;
+    overflow-y: auto;
+    padding: 10px;
+    font-size: 11px;
+    margin-top: 10px;
+}
+
+.log-entry {
+    margin-bottom: 3px;
+    opacity: 0.9;
+    word-wrap: break-word;
+}
+
+.success { color: #0f0; }
+.error { color: #f00; }
+.warning { color: #ff0; }
+.info { color: #0ff; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .main-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .portfolio-value {
+        font-size: 2em;
+    }
+    
+    .controls {
+        flex-direction: column;
+    }
+    
+    input, button {
+        width: 100%;
+    }
+}

@@ -1,0 +1,513 @@
+// AGENTICS CORE SYSTEM
+// The brain of the wealth-building machine
+
+console.log('🚀 Agentics Core System Loading...');
+
+// ===== GLOBAL STATE =====
+let portfolio = {
+    cash: CONFIG.SETTINGS.startingCash,
+    positions: {},
+    transactions: [],
+    totalValue: CONFIG.SETTINGS.startingCash
+};
+
+let currentPrices = {};
+let systemReady = false;
+
+// ===== CORE API CLASS =====
+class AgenticsAPI {
+    constructor() {
+        this.alphaKey = CONFIG.ALPHA_VANTAGE_KEY;
+        this.alpacaKey = CONFIG.ALPACA_KEY;
+        this.alpacaSecret = CONFIG.ALPACA_SECRET;
+    }
+
+    // Get real stock price from Alpha Vantage
+    async getRealPrice(symbol) {
+        if (DEMO_MODE) {
+            return this.getDemoPrice(symbol);
+        }
+
+        try {
+            const url = `${CONFIG.ENDPOINTS.alphaVantage}?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${this.alphaKey}`;
+            
+            log('market-log', `🔍 Fetching real price for ${symbol}...`, 'info');
+            
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            if (data['Error Message'] || data['Note']) {
+                throw new Error('API limit reached or invalid symbol');
+            }
+            
+            const quote = data['Global Quote'];
+            if (!quote) {
+                throw new Error('No quote data received');
+            }
+            
+            const price = parseFloat(quote['05. price']);
+            const change = parseFloat(quote['09. change']);
+            
+            currentPrices[symbol] = price;
+            
+            return {
+                symbol: symbol,
+                price: price,
+                change: change,
+                changePercent: ((change / price) * 100).toFixed(2),
+                volume: parseInt(quote['06. volume']) || 0
+            };
+            
+        } catch (error) {
+            log('market-log', `❌ Real API error: ${error.message}`, 'error');
+            // Fallback to demo mode
+            return this.getDemoPrice(symbol);
+        }
+    }
+
+    // Demo price generator (for testing)
+    getDemoPrice(symbol) {
+        const basePrice = this.getBasePriceForSymbol(symbol);
+        const variance = (Math.random() - 0.5) * 0.1; // ±5% variance
+        const price = basePrice * (1 + variance);
+        const change = (Math.random() - 0.5) * 20; // ±$10 change
+        
+        currentPrices[symbol] = price;
+        
+        return {
+            symbol: symbol,
+            price: parseFloat(price.toFixed(2)),
+            change: parseFloat(change.toFixed(2)),
+            changePercent: ((change / price) * 100).toFixed(2),
+            volume: Math.floor(Math.random() * 1000000)
+        };
+    }
+
+    // Get dividend data
+    async getDividendData(symbol) {
+        if (DEMO_MODE) {
+            return this.getDemoDividend(symbol);
+        }
+
+        try {
+            const url = `${CONFIG.ENDPOINTS.alphaVantage}?function=OVERVIEW&symbol=${symbol}&apikey=${this.alphaKey}`;
+            
+            log('market-log', `📊 Fetching dividend data for ${symbol}...`, 'info');
+            
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            if (data['Error Message']) {
+                throw new Error('Invalid symbol or API error');
+            }
+            
+            return {
+                symbol: symbol,
+                yield: parseFloat(data.DividendYield) || 0,
+                quarterly: parseFloat(data.DividendPerShare) || 0,
+                exDate: data.ExDividendDate || 'N/A'
+            };
+            
+        } catch (error) {
+            log('market-log', `❌ Dividend API error: ${error.message}`, 'error');
+            return this.getDemoDividend(symbol);
+        }
+    }
+
+    // Demo dividend data
+    getDemoDividend(symbol) {
+        const yields = { 'AAPL': 0.5, 'MSFT': 0.7, 'T': 7.2, 'VZ': 6.8, 'KO': 3.1 };
+        const yield = yields[symbol] || (Math.random() * 5 + 0.5);
+        
+        return {
+            symbol: symbol,
+            yield: parseFloat(yield.toFixed(2)),
+            quarterly: parseFloat((yield / 4).toFixed(2)),
+            exDate: this.getNextQuarterDate()
+        };
+    }
+
+    // Helper functions
+    getBasePriceForSymbol(symbol) {
+        const prices = {
+            'AAPL': 185, 'MSFT': 410, 'GOOGL': 2650, 'AMZN': 3200, 'TSLA': 250,
+            'NVDA': 875, 'META': 485, 'T': 15, 'VZ': 35, 'KO': 62
+        };
+        return prices[symbol] || (Math.random() * 300 + 50);
+    }
+
+    getNextQuarterDate() {
+        const date = new Date();
+        date.setMonth(date.getMonth() + 3);
+        return date.toLocaleDateString();
+    }
+
+    // Simulate API delay
+    async delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+}
+
+// ===== MAIN FUNCTIONS =====
+const api = new AgenticsAPI();
+
+// Get stock price
+async function getPrice() {
+    const symbol = document.getElementById('symbol-input').value.toUpperCase().trim();
+    
+    if (!symbol) {
+        log('market-log', '❌ Enter a stock symbol', 'error');
+        return;
+    }
+
+    try {
+        const quote = await api.getRealPrice(symbol);
+        
+        // Update price display
+        const changeColor = quote.change >= 0 ? '#0f0' : '#f00';
+        const changeSymbol = quote.change >= 0 ? '+' : '';
+        
+        document.getElementById('price-display').innerHTML = `
+            <div style="font-size: 1.2em; margin-bottom: 10px;">
+                <strong>${quote.symbol}</strong>
+            </div>
+            <div style="font-size: 1.5em; margin-bottom: 5px;">
+                $${quote.price}
+            </div>
+            <div style="color: ${changeColor}; font-size: 1em;">
+                ${changeSymbol}${quote.change} (${quote.changePercent}%)
+            </div>
+            <div style="font-size: 0.8em; opacity: 0.7; margin-top: 5px;">
+                Volume: ${quote.volume.toLocaleString()}
+            </div>
+        `;
+        
+        log('market-log', `✅ ${symbol}: $${quote.price} (${quote.changePercent}%)`, 'success');
+        
+    } catch (error) {
+        log('market-log', `❌ Error fetching ${symbol}: ${error.message}`, 'error');
+        document.getElementById('price-display').innerHTML = 'Error loading price';
+    }
+}
+
+// Get dividend information
+async function getDividend() {
+    const symbol = document.getElementById('symbol-input').value.toUpperCase().trim();
+    
+    if (!symbol) {
+        log('market-log', '❌ Enter a stock symbol', 'error');
+        return;
+    }
+
+    try {
+        const dividend = await api.getDividendData(symbol);
+        
+        log('market-log', `💎 ${symbol} Dividend Yield: ${dividend.yield}%`, 'success');
+        log('market-log', `💰 Quarterly Payment: $${dividend.quarterly}`, 'success');
+        log('market-log', `📅 Next Ex-Date: ${dividend.exDate}`, 'info');
+        
+    } catch (error) {
+        log('market-log', `❌ Error fetching dividend for ${symbol}: ${error.message}`, 'error');
+    }
+}
+
+// Buy stock
+async function buyStock() {
+    const symbol = document.getElementById('trade-symbol').value.toUpperCase().trim();
+    const qty = parseInt(document.getElementById('trade-qty').value);
+    
+    if (!symbol || !qty || qty <= 0) {
+        log('trade-log', '❌ Enter valid symbol and quantity', 'error');
+        return;
+    }
+
+    try {
+        log('trade-log', `🔄 Buying ${qty} shares of ${symbol}...`, 'warning');
+        
+        // Get current price
+        const quote = await api.getRealPrice(symbol);
+        const totalCost = quote.price * qty;
+        
+        // Check if we have enough cash
+        if (portfolio.cash < totalCost) {
+            log('trade-log', `❌ Insufficient funds. Need $${totalCost.toFixed(2)}, have $${portfolio.cash.toFixed(2)}`, 'error');
+            return;
+        }
+        
+        // Execute trade
+        portfolio.cash -= totalCost;
+        
+        // Update position
+        if (!portfolio.positions[symbol]) {
+            portfolio.positions[symbol] = {
+                qty: 0,
+                totalCost: 0,
+                avgPrice: 0
+            };
+        }
+        
+        const position = portfolio.positions[symbol];
+        position.totalCost += totalCost;
+        position.qty += qty;
+        position.avgPrice = position.totalCost / position.qty;
+        
+        // Add to transaction history
+        portfolio.transactions.push({
+            id: Date.now(),
+            symbol: symbol,
+            qty: qty,
+            price: quote.price,
+            side: 'buy',
+            timestamp: new Date().toISOString(),
+            totalValue: totalCost
+        });
+        
+        log('trade-log', `✅ BOUGHT ${qty} ${symbol} @ $${quote.price} = $${totalCost.toFixed(2)}`, 'success');
+        log('trade-log', `💰 Remaining Cash: $${portfolio.cash.toFixed(2)}`, 'info');
+        
+        // Update portfolio display
+        updatePortfolioDisplay();
+        savePortfolio();
+        
+    } catch (error) {
+        log('trade-log', `❌ Error buying ${symbol}: ${error.message}`, 'error');
+    }
+}
+
+// Sell stock
+async function sellStock() {
+    const symbol = document.getElementById('trade-symbol').value.toUpperCase().trim();
+    const qty = parseInt(document.getElementById('trade-qty').value);
+    
+    if (!symbol || !qty || qty <= 0) {
+        log('trade-log', '❌ Enter valid symbol and quantity', 'error');
+        return;
+    }
+
+    // Check if we have the position
+    if (!portfolio.positions[symbol] || portfolio.positions[symbol].qty < qty) {
+        log('trade-log', `❌ Insufficient ${symbol} shares. Have ${portfolio.positions[symbol]?.qty || 0}, trying to sell ${qty}`, 'error');
+        return;
+    }
+
+    try {
+        log('trade-log', `🔄 Selling ${qty} shares of ${symbol}...`, 'warning');
+        
+        // Get current price
+        const quote = await api.getRealPrice(symbol);
+        const totalValue = quote.price * qty;
+        
+        // Execute trade
+        portfolio.cash += totalValue;
+        portfolio.positions[symbol].qty -= qty;
+        
+        // Remove position if quantity becomes 0
+        if (portfolio.positions[symbol].qty === 0) {
+            delete portfolio.positions[symbol];
+        }
+        
+        // Add to transaction history
+        portfolio.transactions.push({
+            id: Date.now(),
+            symbol: symbol,
+            qty: qty,
+            price: quote.price,
+            side: 'sell',
+            timestamp: new Date().toISOString(),
+            totalValue: totalValue
+        });
+        
+        log('trade-log', `✅ SOLD ${qty} ${symbol} @ $${quote.price} = $${totalValue.toFixed(2)}`, 'success');
+        log('trade-log', `💰 Cash Now: $${portfolio.cash.toFixed(2)}`, 'info');
+        
+        // Update portfolio display
+        updatePortfolioDisplay();
+        savePortfolio();
+        
+    } catch (error) {
+        log('trade-log', `❌ Error selling ${symbol}: ${error.message}`, 'error');
+    }
+}
+
+// Show account information
+function showAccount() {
+    const totalValue = calculateTotalPortfolioValue();
+    const totalGainLoss = totalValue - CONFIG.SETTINGS.startingCash;
+    const gainLossPercent = ((totalGainLoss / CONFIG.SETTINGS.startingCash) * 100).toFixed(2);
+    
+    log('trade-log', `💳 Total Portfolio Value: $${totalValue.toFixed(2)}`, 'success');
+    log('trade-log', `📊 Total P/L: ${totalGainLoss >= 0 ? '+' : ''}$${totalGainLoss.toFixed(2)} (${gainLossPercent}%)`, 
+        totalGainLoss >= 0 ? 'success' : 'error');
+    log('trade-log', `💰 Available Cash: $${portfolio.cash.toFixed(2)}`, 'info');
+    log('trade-log', `📋 Open Positions: ${Object.keys(portfolio.positions).length}`, 'info');
+    log('trade-log', `📈 Total Transactions: ${portfolio.transactions.length}`, 'info');
+}
+
+// ===== PORTFOLIO MANAGEMENT =====
+
+// Calculate total portfolio value
+function calculateTotalPortfolioValue() {
+    let total = portfolio.cash;
+    
+    for (const [symbol, position] of Object.entries(portfolio.positions)) {
+        const currentPrice = currentPrices[symbol] || position.avgPrice;
+        total += position.qty * currentPrice;
+    }
+    
+    return total;
+}
+
+// Update portfolio display
+function updatePortfolioDisplay() {
+    const totalValue = calculateTotalPortfolioValue();
+    const totalGainLoss = totalValue - CONFIG.SETTINGS.startingCash;
+    const gainLossPercent = ((totalGainLoss / CONFIG.SETTINGS.startingCash) * 100).toFixed(2);
+    
+    // Update main portfolio value
+    const valueColor = totalGainLoss >= 0 ? '#0f0' : '#f00';
+    document.getElementById('portfolio-value').innerHTML = `
+        $${totalValue.toFixed(2)}
+        <div style="font-size: 0.4em; color: ${valueColor}; margin-top: 10px;">
+            ${totalGainLoss >= 0 ? '+' : ''}$${totalGainLoss.toFixed(2)} (${gainLossPercent}%)
+        </div>
+    `;
+    
+    // Update positions grid
+    const positionsHtml = [];
+    
+    // Add cash position
+    positionsHtml.push(`
+        <div class="position">
+            <div class="symbol">CASH</div>
+            <div class="quantity">Available</div>
+            <div class="value">$${portfolio.cash.toFixed(2)}</div>
+            <div class="pnl">Ready to invest</div>
+        </div>
+    `);
+    
+    // Add stock positions
+    for (const [symbol, position] of Object.entries(portfolio.positions)) {
+        const currentPrice = currentPrices[symbol] || position.avgPrice;
+        const marketValue = position.qty * currentPrice;
+        const gainLoss = marketValue - position.totalCost;
+        const gainLossPercent = ((gainLoss / position.totalCost) * 100).toFixed(2);
+        
+        positionsHtml.push(`
+            <div class="position">
+                <div class="symbol">${symbol}</div>
+                <div class="quantity">${position.qty} shares</div>
+                <div class="value">$${marketValue.toFixed(2)}</div>
+                <div class="pnl ${gainLoss >= 0 ? 'profit' : 'loss'}">
+                    ${gainLoss >= 0 ? '+' : ''}${gainLossPercent}%
+                </div>
+            </div>
+        `);
+    }
+    
+    document.getElementById('positions-grid').innerHTML = positionsHtml.join('');
+    
+    // Log portfolio update
+    log('portfolio-log', `📊 Portfolio updated: $${totalValue.toFixed(2)} (${gainLossPercent}%)`, 'info');
+}
+
+// ===== DATA PERSISTENCE =====
+
+// Save portfolio to localStorage
+function savePortfolio() {
+    try {
+        localStorage.setItem('agentics_portfolio', JSON.stringify(portfolio));
+        localStorage.setItem('agentics_prices', JSON.stringify(currentPrices));
+    } catch (error) {
+        console.error('Error saving portfolio:', error);
+    }
+}
+
+// Load portfolio from localStorage
+function loadPortfolio() {
+    try {
+        const savedPortfolio = localStorage.getItem('agentics_portfolio');
+        const savedPrices = localStorage.getItem('agentics_prices');
+        
+        if (savedPortfolio) {
+            portfolio = JSON.parse(savedPortfolio);
+            log('portfolio-log', '✅ Portfolio loaded from storage', 'success');
+        }
+        
+        if (savedPrices) {
+            currentPrices = JSON.parse(savedPrices);
+        }
+        
+    } catch (error) {
+        console.error('Error loading portfolio:', error);
+        log('portfolio-log', '⚠️ Using fresh portfolio', 'warning');
+    }
+}
+
+// ===== UTILITY FUNCTIONS =====
+
+// Logging function
+function log(containerId, message, type = 'info') {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    const entry = document.createElement('div');
+    entry.className = `log-entry ${type}`;
+    entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+    
+    container.appendChild(entry);
+    container.scrollTop = container.scrollHeight;
+    
+    // Keep only last N entries
+    while (container.children.length > CONFIG.SETTINGS.maxLogEntries) {
+        container.removeChild(container.firstChild);
+    }
+}
+
+// ===== SYSTEM INITIALIZATION =====
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Initializing Agentics Core System...');
+    
+    // Load saved data
+    loadPortfolio();
+    
+    // Update displays
+    updatePortfolioDisplay();
+    
+    // Set system status
+    systemReady = true;
+    document.getElementById('system-status').innerHTML = '🟢 ONLINE';
+    document.getElementById('system-status').style.color = '#0f0';
+    
+    // Log startup
+    log('portfolio-log', '🚀 Agentics Core System ONLINE', 'success');
+    log('portfolio-log', `💰 Starting Portfolio: $${portfolio.totalValue?.toFixed(2) || CONFIG.SETTINGS.startingCash.toFixed(2)}`, 'info');
+    log('portfolio-log', `⚙️ Demo Mode: ${DEMO_MODE ? 'ON' : 'OFF'}`, 'info');
+    
+    // Add keyboard shortcuts
+    document.getElementById('symbol-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') getPrice();
+    });
+    
+    document.getElementById('trade-symbol').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') buyStock();
+    });
+    
+    document.getElementById('trade-qty').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') buyStock();
+    });
+    
+    console.log('✅ Agentics Core System Ready');
+});
+
+// ===== EXPORT FOR CONSOLE ACCESS =====
+window.agentics = {
+    portfolio,
+    api,
+    getPrice,
+    buyStock,
+    sellStock,
+    showAccount,
+    updatePortfolioDisplay
+};
+
+console.log('🎯 Agentics Core Loaded - Ready for wealth building!');

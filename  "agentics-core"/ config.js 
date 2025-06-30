@@ -1,0 +1,32 @@
+// AGENTICS CORE CONFIGURATION
+// Replace 'demo' with your real API keys
+
+const CONFIG = {
+    // Alpha Vantage API (Free: 5 calls/minute, 500/day)
+    // Get free key at: https://www.alphavantage.co/support/#api-key
+    ALPHA_VANTAGE_KEY: 'demo',
+    
+    // Alpaca Paper Trading API (Free paper trading)
+    // Get free account at: https://alpaca.markets/
+    ALPACA_KEY: 'demo',
+    ALPACA_SECRET: 'demo',
+    
+    // API Endpoints
+    ENDPOINTS: {
+        alphaVantage: 'https://www.alphavantage.co/query',
+        alpacaPaper: 'https://paper-api.alpaca.markets'
+    },
+    
+    // System Settings
+    SETTINGS: {
+        startingCash: 10000,
+        maxLogEntries: 50,
+        apiTimeout: 10000
+    }
+};
+
+// Demo Mode - Set to false when using real APIs
+const DEMO_MODE = true;
+
+console.log('🔧 Configuration loaded');
+console.log('Demo Mode:', DEMO_MODE ? 'ON' : 'OFF');

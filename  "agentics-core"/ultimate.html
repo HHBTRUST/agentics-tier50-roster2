@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentics ULTIMATE - Real Live Trading System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: linear-gradient(135deg, #000000, #001100);
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 3px solid #0f0;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 3em;
+            color: #0f0;
+            text-shadow: 0 0 20px #0f0, 0 0 40px #0f0;
+            margin-bottom: 10px;
+            animation: glow 2s ease-in-out infinite alternate;
+            letter-spacing: 3px;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 20px #0f0, 0 0 40px #0f0; }
+            to { text-shadow: 0 0 30px #0f0, 0 0 60px #0f0, 0 0 80px #0f0; }
+        }
+        
+        .live-badges {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            padding: 8px 15px;
+            border: 1px solid;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+        
+        .badge.live { border-color: #f00; color: #f00; background: rgba(255, 0, 0, 0.1); }
+        .badge.trading { border-color: #0f0; color: #0f0; background: rgba(0, 255, 0, 0.1); }
+        .badge.data { border-color: #00f; color: #00f; background: rgba(0, 0, 255, 0.1); }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+        
+        .system-status {
+            background: rgba(0, 255, 0, 0.1);
+            border: 2px solid #0f0;
+            padding: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 1.2em;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            max-width: 1400px;
+            margin: 0 auto 30px auto;
+        }
+        
+        .panel {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #0f0;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #0f0, #00f, #0f0);
+            opacity: 0.3;
+            z-index: -1;
+            animation: borderGlow 3s linear infinite;
+        }
+        
+        @keyframes borderGlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        
+        .panel h2 {
+            color: #0f0;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            font-size: 1.3em;
+            text-shadow: 0 0 10px #0f0;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        input {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #0f0;
+            color: #0f0;
+            padding: 12px;
+            flex: 1;
+            min-width: 120px;
+            text-transform: uppercase;
+            border-radius: 5px;
+            font-family: inherit;
+        }
+        
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 15px #0f0;
+            border-color: #00f;
+        }
+        
+        button {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #0f0;
+            color: #0f0;
+            padding: 12px 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            text-transform: uppercase;
+            font-weight: bold;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        button:hover::before {
+            left: 100%;
+        }
+        
+        button:hover {
+            background: #0f0;
+            color: #000;
+            box-shadow: 0 0 20px #0f0;
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .btn-live { border-color: #f00; color: #f00; }
+        .btn-live:hover { background: #f00; color: #fff; box-shadow: 0 0 20px #f00; }
+        
+        .btn-buy { border-color: #0f0; color: #0f0; }
+        .btn-buy:hover { background: #0f0; color: #000; }
+        
+        .btn-sell { border-color: #f00; color: #f00; }
+        .btn-sell:hover { background: #f00; color: #fff; }
+        
+        .btn-info { border-color: #0ff; color: #0ff; }
+        .btn-info:hover { background: #0ff; color: #000; }
+        
+        .price-display {
+            font-size: 2em;
+            text-align: center;
+            margin: 25px 0;
+            padding: 20px;
+            border: 2px solid #333;
+            background: rgba(0, 255, 0, 0.05);
+            min-height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .loading {
+            border: 3px solid #333;
+            border-top: 3px solid #0f0;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 15px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .portfolio {
+            grid-column: 1 / -1;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .portfolio-value {
+            font-size: 4em;
+            text-align: center;
+            color: #0f0;
+            text-shadow: 0 0 30px #0f0;
+            margin: 30px 0;
+            padding: 30px;
+            border: 3px solid #0f0;
+            background: rgba(0, 255, 0, 0.1);
+            border-radius: 15px;
+            position: relative;
+        }
+        
+        .portfolio-value::after {
+            content: 'LIVE PORTFOLIO';
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 0.2em;
+            color: #f00;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        .positions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .position {
+            background: rgba(0, 255, 0, 0.1);
+            border: 2px solid #0f0;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .position:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.4);
+        }
+        
+        .position .symbol {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .position .quantity {
+            font-size: 1em;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+        
+        .position .value {
+            font-size: 1.3em;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        .position .pnl {
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        
+        .profit { color: #0f0; text-shadow: 0 0 10px #0f0; }
+        .loss { color: #f00; text-shadow: 0 0 10px #f00; }
+        
+        .log {
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #333;
+            height: 180px;
+            overflow-y: auto;
+            padding: 15px;
+            font-size: 11px;
+            margin-top: 15px;
+            border-radius: 5px;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+            opacity: 0.9;
+            word-wrap: break-word;
+            animation: fadeIn 0.5s ease-in;
+            padding: 2px 0;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 0.9; transform: translateX(0); }
+        }
+        
+        .success { color: #0f0; }
+        .error { color: #f00; }
+        .warning { color: #ff0; }
+        .info { color: #0ff; }
+        
+        .api-indicators {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+        
+        .api-indicator {
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid;
+            padding: 8px 12px;
+            border-radius: 15px;
+            font-size: 10px;
+            font-weight: bold;
+            min-width: 100px;
+            text-align: center;
+        }
+        
+        .api-indicator.connected {
+            border-color: #0f0;
+            color: #0f0;
+            animation: connectedPulse 2s infinite;
+        }
+        
+        .api-indicator.error {
+            border-color: #f00;
+            color: #f00;
+            animation: errorBlink 1s infinite;
+        }
+        
+        @keyframes connectedPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        @keyframes errorBlink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+        
+        .trade-history {
+            grid-column: 1 / -1;
+            margin-top: 20px;
+        }
+        
+        .trade-entry {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #333;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .trade-entry.buy { border-left: 4px solid #0f0; }
+        .trade-entry.sell { border-left: 4px solid #f00; }
+        
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .portfolio-value {
+                font-size: 2.5em;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            input, button {
+                width: 100%;
+            }
+            
+            .api-indicators {
+                position: relative;
+                top: auto;
+                right: auto;
+                flex-direction: row;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="api-indicators" id="api-indicators">
+        <div class="api-indicator" id="alpaca-status">Alpaca API</div>
+        <div class="api-indicator" id="alpha-status">Alpha Vantage</div>
+        <div class="api-indicator" id="system-status">System Status</div>
+    </div>
+    
+    <div class="header">
+        <h1>AGENTICS ULTIMATE</h1>
+        <div class="live-badges">
+            <span class="badge live">🔴 LIVE DATA</span>
+            <span class="badge trading">⚡ REAL TRADING</span>
+            <span class="badge data">📡 MARKET CONNECTED</span>
+        </div>
+    </div>
+    
+    <div class="system-status" id="main-status">
+        🚀 ULTIMATE LIVE SYSTEM STARTING...
+    </div>
+    
+    <div class="main-grid">
+        <!-- LIVE MARKET DATA -->
+        <div class="panel">
+            <h2>📊 REAL-TIME MARKET DATA</h2>
+            <div class="controls">
+                <input type="text" id="symbol-input" placeholder="AAPL" value="AAPL">
+                <button onclick="getRealTimePrice()" class="btn-live">LIVE PRICE</button>
+                <button onclick="getRealTimeDividend()" class="btn-info">DIVIDEND</button>
+            </div>
+            <div class="price-display" id="price-display">
+                Enter symbol and click LIVE PRICE for real market data
+            </div>
+            <div class="log" id="market-log"></div>
+        </div>
+        
+        <!-- REAL TRADING -->
+        <div class="panel">
+            <h2>⚡ LIVE PAPER TRADING</h2>
+            <div class="controls">
+                <input type="text" id="trade-symbol" placeholder="AAPL" value="AAPL">
+                <input type="number" id="trade-qty" placeholder="10" value="10">
+            </div>
+            <div class="controls">
+                <button onclick="executeRealBuy()" class="btn-buy">🚀 BUY LIVE</button>
+                <button onclick="executeRealSell()" class="btn-sell">💥 SELL LIVE</button>
+                <button onclick="showRealAccount()" class="btn-info">ACCOUNT</button>
+            </div>
+            <div class="log" id="trade-log"></div>
+        </div>
+    </div>
+    
+    <!-- LIVE PORTFOLIO -->
+    <div class="panel portfolio">
+        <h2>💰 LIVE PORTFOLIO TRACKING</h2>
+        <div class="portfolio-value" id="portfolio-value">
+            Connecting to live account...
+        </div>
+        <div class="positions" id="positions-grid">
+            <!-- Live positions will appear here -->
+        </div>
+        <div class="log" id="portfolio-log"></div>
+    </div>
+    
+    <!-- TRADE HISTORY -->
+    <div class="panel trade-history">
+        <h2>📈 LIVE TRADE HISTORY</h2>
+        <div id="trade-history-list">
+            <!-- Trade history will appear here -->
+        </div>
+    </div>
+
+    <script>
+        // ULTIMATE LIVE CONFIGURATION WITH NEW ALPACA KEY
+        const ULTIMATE_CONFIG = {
+            alpaca: {
+                key: 'PK1SMA5HLMLSSGGD1J2F',
+                secret: 'JedoGXjUB5RgdT3MooxO2y6EcRcda4EK7Uu9I4Ag',
+                baseUrl: 'https://paper-api.alpaca.markets'
+            },
+            alphaVantage: {
+                key: 'HKPZNZMZFDRL8T8G',
+                baseUrl: 'https://www.alphavantage.co/query'
+            },
+            rateLimits: {
+                alpaca: 200,
+                alphaVantage: 5
+            }
+        };
+        
+        // GLOBAL STATE
+        let ultimatePortfolio = null;
+        let livePrices = {};
+        let apiCallCount = {alpaca: 0, alphaVantage: 0};
+        let systemOnline = false;
+        let lastApiCall = {alpaca: 0, alphaVantage: 0};
+        
+        // ULTIMATE API CLASS
+        class UltimateAPI {
+            constructor() {
+                this.alpacaKey = ULTIMATE_CONFIG.alpaca.key;
+                this.alpacaSecret = ULTIMATE_CONFIG.alpaca.secret;
+                this.alphaKey = ULTIMATE_CONFIG.alphaVantage.key;
+                
+                // Log configuration on startup
+                console.log('🔧 Ultimate API initialized with:');
+                console.log('- Alpaca Key:', this.alpacaKey.substring(0, 8) + '...');
+                console.log('- Alpha Vantage Key:', this.alphaKey.substring(0, 8) + '...');
+            }
+            
+            async enforceRateLimit(service, limit) {
+                const now = Date.now();
+                const timeSinceLastCall = now - lastApiCall[service];
+                const minInterval = 60000 / limit; // ms between calls
+                
+                if (timeSinceLastCall < minInterval) {
+                    const waitTime = minInterval - timeSinceLastCall;
+                    log('portfolio-log', `⏰ Rate limiting ${service}: waiting ${waitTime}ms`, 'warning');
+                    await new Promise(resolve => setTimeout(resolve, waitTime));
+                }
+                
+                lastApiCall[service] = Date.now();
+            }
+            
+            async callAlpacaAPI(endpoint, method = 'GET', body = null) {
+                await this.enforceRateLimit('alpaca', ULTIMATE_CONFIG.rateLimits.alpaca);
+                
+                const url = `${ULTIMATE_CONFIG.alpaca.baseUrl}${endpoint}`;
+                const options = {
+                    method: method,
+                    headers: {
+                        'APCA-API-KEY-ID': this.alpacaKey,
+                        'APCA-API-SECRET-KEY': this.alpacaSecret,
+                        'Content-Type': 'application/json'
+                    }
+                };
+                
+                if (body && method !== 'GET') {
+                    options.body = JSON.stringify(body);
+                }
+                
+                try {
+                    apiCallCount.alpaca++;
+                    log('trade-log', `📡 Alpaca API: ${method} ${endpoint}`, 'info');
+                    console.log('🔗 Calling Alpaca:', url, options.headers);
+                    
+                    const response = await fetch(url, options);
+                    console.log('📡 Alpaca response status:', response.status);
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('❌ Alpaca error response:', errorText);
+                        throw new Error(`Alpaca ${response.status}: ${errorText}`);
+                    }
+                    
+                    const data = await response.json();
+                    console.log('✅ Alpaca success:', data);
+                    this.updateApiStatus('alpaca', 'connected');
+                    return data;
+                    
+                } catch (error) {
+                    console.error('❌ Alpaca API Error:', error);
+                    this.updateApiStatus('alpaca', 'error');
+                    log('trade-log', `❌ Alpaca Error: ${error.message}`, 'error');
+                    throw error;
+                }
+            }
+            
+            async callAlphaVantageAPI(params) {
+                await this.enforceRateLimit('alphaVantage', ULTIMATE_CONFIG.rateLimits.alphaVantage);
+                
+                const urlParams = new URLSearchParams({
+                    ...params,
+                    apikey: this.alphaKey
+                });
+                
+                const url = `${ULTIMATE_CONFIG.alphaVantage.baseUrl}?${urlParams}`;
+                
+                try {
+                    apiCallCount.alphaVantage++;
+                    log('market-log', `📡 Alpha Vantage: ${params.function} ${params.symbol || ''}`, 'info');
+                    console.log('🔗 Calling Alpha Vantage:', url);
+                    
+                    const response = await fetch(url);
+                    console.log('📡 Alpha Vantage response status:', response.status);
+                    
+                    if (!response.ok) {
+                        throw new Error(`Alpha Vantage ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    console.log('✅ Alpha Vantage success:', data);
+                    
+                    if (data['Error Message']) {
+                        throw new Error(data['Error Message']);
+                    }
+                    
+                    if (data['Note']) {
+                        throw new Error('API rate limit reached');
+                    }
+                    
+                    this.updateApiStatus('alphaVantage', 'connected');
+                    return data;
+                    
+                } catch (error) {
+                    console.error('❌ Alpha Vantage API Error:', error);
+                    this.updateApiStatus('alphaVantage', 'error');
+                    log('market-log', `❌ Alpha Vantage Error: ${error.message}`, 'error');
+                    throw error;
+                }
+            }
+            
+            updateApiStatus(service, status) {
+                const element = document.getElementById(service === 'alpaca' ? 'alpaca-status' : 'alpha-status');
+                if (element) {
+                    element.className = `api-indicator ${status}`;
+                    element.textContent = `${service.toUpperCase()} ${status.toUpperCase()}`;
+                }
+            }
+            
+            async testAllConnections() {
+                try {
+                    log('portfolio-log', '🧪 Testing all API connections...', 'warning');
+                    console.log('🧪 Starting connection tests...');
+                    
+                    // Test Alpaca first
+                    console.log('Testing Alpaca API...');
+                    log('portfolio-log', '🔄 Testing Alpaca connection...', 'info');
+                    const account = await this.callAlpacaAPI('/v2/account');
+                    log('portfolio-log', `✅ Alpaca connected: ${account.account_number}`, 'success');
+                    
+                    // Test Alpha Vantage
+                    console.log('Testing Alpha Vantage API...');
+                    log('portfolio-log', '🔄 Testing Alpha Vantage connection...', 'info');
+                    const quote = await this.callAlphaVantageAPI({
+                        function: 'GLOBAL_QUOTE',
+                        symbol: 'AAPL'
+                    });
+                    
+                    if (quote['Global Quote']) {
+                        log('portfolio-log', `✅ Alpha Vantage connected: AAPL $${quote['Global Quote']['05. price']}`, 'success');
+                    }
+                    
+                    this.updateApiStatus('system', 'connected');
+                    document.getElementById('system-status').className = 'api-indicator connected';
+                    document.getElementById('system-status').textContent = 'ALL SYSTEMS ONLINE';
+                    
+                    console.log('🎉 All connection tests passed!');
+                    return true;
+                    
+                } catch (error) {
+                    console.error('❌ Connection test failed:', error);
+                    log('portfolio-log', `❌ Connection test failed: ${error.message}`, 'error');
+                    this.updateApiStatus('system', 'error');
+                    return false;
+                }
+            }
+        }
+        
+        const ultimateAPI = new UltimateAPI();
+        
+        // LIVE FUNCTIONS
+        async function getRealTimePrice() {
+            const symbol = document.getElementById('symbol-input').value.toUpperCase().trim();
+            
+            if (!symbol) {
+                log('market-log', '❌ Enter a stock symbol', 'error');
+                return;
+            }
+            
+            document.getElementById('price-display').innerHTML = '<div class="loading"></div><div>Fetching LIVE market data...</div>';
+            
+            try {
+                const data = await ultimateAPI.callAlphaVantageAPI({
+                    function: 'GLOBAL_QUOTE',
+                    symbol: symbol
+                });
+                
+                const quote = data['Global Quote'];
+                if (!quote) {
+                    throw new Error('No quote data received');
+                }
+                
+                const price = parseFloat(quote['05. price']);
+                const change = parseFloat(quote['09. change']);
+                const changePercent = ((change / price) * 100).toFixed(2);
+                const volume = parseInt(quote['06. volume']);
+                
+                livePrices[symbol] = price;
+                
+                const changeColor = change >= 0 ? '#0f0' : '#f00';
+                const changeSymbol = change >= 0 ? '+' : '';
+                
+                document.getElementById('price-display').innerHTML = `
+                    <div style="font-size: 0.6em; color: #f00; margin-bottom: 5px;">
+                        🔴 LIVE DATA
+                    </div>
+                    <div style="font-size: 0.8em; margin-bottom: 10px;">
+                        <strong>${quote['01. symbol']}</strong>
+                    </div>
+                    <div style="font-size: 1.2em; margin-bottom: 10px; font-weight: bold;">
+                        $${price}
+                    </div>
+                    <div style="color: ${changeColor}; font-size: 0.7em; margin-bottom: 8px;">
+                        ${changeSymbol}${change} (${changePercent}%)
+                    </div>
+                    <div style="font-size: 0.4em; opacity: 0.7;">
+                        Volume: ${volume.toLocaleString()}
+                    </div>
+                    <div style="font-size: 0.3em; opacity: 0.5; margin-top: 5px;">
+                        Last: ${quote['07. latest trading day']}
+                    </div>
+                `;
+                
+                log('market-log', `✅ LIVE ${symbol}: $${price} (${changePercent}%)`, 'success');
+                
+            } catch (error) {
+                document.getElementById('price-display').innerHTML = `
+                    <div style="color: #f00; font-size: 0.8em;">LIVE DATA ERROR</div>
+                    <div style="font-size: 0.5em; opacity: 0.7;">${error.message}</div>
+                `;
+            }
+        }
+        
+        async function getRealTimeDividend() {
+            const symbol = document.getElementById('symbol-input').value.toUpperCase().trim();
+            
+            if (!symbol) {
+                log('market-log', '❌ Enter a stock symbol', 'error');
+                return;
+            }
+            
+            try {
+                const data = await ultimateAPI.callAlphaVantageAPI({
+                    function: 'OVERVIEW',
+                    symbol: symbol
+                });
+                
+                const yield = parseFloat(data.DividendYield) || 0;
+                const dividendPerShare = parseFloat(data.DividendPerShare) || 0;
+                const exDate = data.ExDividendDate || 'N/A';
+                
+                log('market-log', `💎 LIVE ${symbol} Dividend Yield: ${yield}%`, 'success');
+                log('market-log', `💰 Annual Dividend: $${dividendPerShare}`, 'success');
+                log('market-log', `📅 Ex-Dividend Date: ${exDate}`, 'info');
+                
+            } catch (error) {
+                // Error already logged in API call
+            }
+        }
+        
+        async function executeRealBuy() {
+            const symbol = document.getElementById('trade-symbol').value.toUpperCase().trim();
+            const qty = parseInt(document.getElementById('trade-qty').value);
+            
+            if (!symbol || !qty || qty <= 0) {
+                log('trade-log', '❌ Enter valid symbol and quantity', 'error');
+                return;
+            }
+            
+            try {
+                log('trade-log', `🚀 EXECUTING LIVE BUY: ${qty} ${symbol}`, 'warning');
+                
+                const orderData = {
+                    symbol: symbol,
+                    qty: qty,
+                    side: 'buy',
+                    type: 'market',
+                    time_in_force: 'day'
+                };
+                
+                console.log('📤 Sending buy order:', orderData);
+                const order = await ultimateAPI.callAlpacaAPI('/v2/orders', 'POST', orderData);
+                
+                log('trade-log', `✅ LIVE BUY ORDER SUBMITTED: ${order.id}`, 'success');
+                log('trade-log', `📊 Order: ${qty} ${symbol} @ MARKET`, 'success');
+                log('trade-log', `⏱️ Status: ${order.status}`, 'info');
+                
+                // Add to trade history
+                addToTradeHistory(symbol, qty, 'buy', 'MARKET', order.id);
+                
+                // Refresh account and positions
+                setTimeout(() => {
+                    showRealAccount();
+                    getRealPositions();
+                }, 3000);
+                
+            } catch (error) {
+                log('trade-log', `❌ LIVE BUY FAILED: ${error.message}`, 'error');
+            }
+        }
+        
+        async function executeRealSell() {
+            const symbol = document.getElementById('trade-symbol').value.toUpperCase().trim();
+            const qty = parseInt(document.getElementById('trade-qty').value);
+            
+            if (!symbol || !qty || qty <= 0) {
+                log('trade-log', '❌ Enter valid symbol and quantity', 'error');
+                return;
+            }
+            
+            try {
+                log('trade-log', `💥 EXECUTING LIVE SELL: ${qty} ${symbol}`, 'warning');
+                
+                const orderData = {
+                    symbol: symbol,
+                    qty: qty,
+                    side: 'sell',
+                    type: 'market',
+                    time_in_force: 'day'
+                };
+                
+                console.log('📤 Sending sell order:', orderData);
+                const order = await ultimateAPI.callAlpacaAPI('/v2/orders', 'POST', orderData);
+                
+                log('trade-log', `✅ LIVE SELL ORDER SUBMITTED: ${order.id}`, 'success');
+                log('trade-log', `📊 Order: ${qty} ${symbol} @ MARKET`, 'success');
+                log('trade-log', `⏱️ Status: ${order.status}`, 'info');
+                
+                // Add to trade history
+                addToTradeHistory(symbol, qty, 'sell', 'MARKET', order.id);
+                
+                // Refresh account and positions
+                setTimeout(() => {
+                    showRealAccount();
+                    getRealPositions();
+                }, 3000);
+                
+            } catch (error) {
+                log('trade-log', `❌ LIVE SELL FAILED: ${error.message}`, 'error');
+            }
+        }
+        
+        async function showRealAccount() {
+            try {
+                const account = await ultimateAPI.callAlpacaAPI('/v2/account');
+                
+                const portfolioValue = parseFloat(account.portfolio_value);
+                const buyingPower = parseFloat(account.buying_power);
+                const cash = parseFloat(account.cash);
+                
+                log('trade-log', `💳 LIVE Portfolio Value: $${portfolioValue.toLocaleString()}`, 'success');
+                log('trade-log', `⚡ Buying Power: $${buyingPower.toLocaleString()}`, 'success');
+                log('trade-log', `💰 Cash: $${cash.toLocaleString()}`, 'info');
+                log('trade-log', `🎯 Account: ${account.account_number}`, 'info');
+                log('trade-log', `📈 Status: ${account.status}`, 'info');
+                
+                // Update portfolio display
+                document.getElementById('portfolio-value').innerHTML = `
+                    $${portfolioValue.toLocaleString()}
+                    <div style="font-size: 0.3em; color: #0ff; margin-top: 10px;">
+                        Buying Power: $${buyingPower.toLocaleString()}
+                    </div>
+                `;
+                
+                ultimatePortfolio = account;
+                
+            } catch (error) {
+                log('trade-log', `❌ Account Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function getRealPositions() {
+            try {
+                const positions = await ultimateAPI.callAlpacaAPI('/v2/positions');
+                
+                if (positions.length === 0) {
+                    log('portfolio-log', '📋 No open positions', 'info');
+                    document.getElementById('positions-grid').innerHTML = `
+                        <div class="position">
+                            <div class="symbol">NO POSITIONS</div>
+                            <div class="quantity">Ready to trade</div>
+                            <div class="value">$0.00</div>
+                            <div class="pnl">Start trading!</div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                log('portfolio-log', `📊 ${positions.length} live positions loaded`, 'success');
+                
+                const positionsHtml = positions.map(pos => {
+                    const qty = parseInt(pos.qty);
+                    const marketValue = parseFloat(pos.market_value);
+                    const unrealizedPL = parseFloat(pos.unrealized_pl);
+                    const unrealizedPLPercent = parseFloat(pos.unrealized_plpc) * 100;
+                    
+                    return `
+                        <div class="position">
+                            <div class="symbol">${pos.symbol} <span style="font-size: 0.5em; color: #f00;">LIVE</span></div>
+                            <div class="quantity">${qty} shares</div>
+                            <div class="value">$${marketValue.toLocaleString()}</div>
+                            <div class="pnl ${unrealizedPL >= 0 ? 'profit' : 'loss'}">
+                                ${unrealizedPL >= 0 ? '+' : ''}${unrealizedPLPercent.toFixed(2)}%
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                document.getElementById('positions-grid').innerHTML = positionsHtml;
+                
+                positions.forEach(pos => {
+                    log('portfolio-log', `📈 ${pos.symbol}: ${pos.qty} shares, $${parseFloat(pos.unrealized_pl).toFixed(2)} P/L`, 'info');
+                });
+                
+            } catch (error) {
+                log('portfolio-log', `❌ Positions Error: ${error.message}`, 'error');
+            }
+        }
+        
+        function addToTradeHistory(symbol, qty, side, price, orderId) {
+            const historyList = document.getElementById('trade-history-list');
+            const entry = document.createElement('div');
+            entry.className = `trade-entry ${side}`;
+            entry.innerHTML = `
+                <div>
+                    <strong>${side.toUpperCase()} ${qty} ${symbol}</strong> @ ${price}
+                </div>
+                <div style="font-size: 0.8em; opacity: 0.7;">
+                    ${new Date().toLocaleTimeString()} | ID: ${orderId.substring(0, 8)}...
+                </div>
+            `;
+            
+            historyList.insertBefore(entry, historyList.firstChild);
+            
+            // Keep only last 20 trades
+            while (historyList.children.length > 20) {
+                historyList.removeChild(historyList.lastChild);
+            }
+        }
+        
+        function log(containerId, message, type = 'info') {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            
+            container.appendChild(entry);
+            container.scrollTop = container.scrollHeight;
+            
+            while (container.children.length > 50) {
+                container.removeChild(container.firstChild);
+            }
+        }
+        
+        // SYSTEM INITIALIZATION
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('🚀 Ultimate Agentics System Starting...');
+            
+            document.getElementById('main-status').innerHTML = '🔄 Connecting to live APIs...';
+            
+            try {
+                // Test all connections
+                log('portfolio-log', '🚀 ULTIMATE SYSTEM INITIALIZING...', 'warning');
+                const connected = await ultimateAPI.testAllConnections();
+                
+                if (connected) {
+                    systemOnline = true;
+                    document.getElementById('main-status').innerHTML = '🟢 ULTIMATE LIVE SYSTEM ONLINE - ALL APIS CONNECTED';
+                    document.getElementById('main-status').style.color = '#0f0';
+                    
+                    // Load account data
+                    log('portfolio-log', '🔄 Loading live account data...', 'info');
+                    await showRealAccount();
+                    await getRealPositions();
+                    
+                    log('portfolio-log', '🎉 ULTIMATE SYSTEM FULLY OPERATIONAL', 'success');
+                    log('portfolio-log', `🔴 LIVE TRADING WITH REAL MARKET DATA`, 'warning');
+                    log('portfolio-log', `📡 API Calls: Alpaca ${apiCallCount.alpaca}, Alpha ${apiCallCount.alphaVantage}`, 'info');
+                    
+                } else {
+                    document.getElementById('main-status').innerHTML = '❌ CONNECTION FAILED - CHECK API KEYS';
+                    document.getElementById('main-status').style.color = '#f00';
+                    log('portfolio-log', '❌ SYSTEM FAILED TO INITIALIZE', 'error');
+                }
+                
+            } catch (error) {
+                console.error('❌ System initialization error:', error);
+                document.getElementById('main-status').innerHTML = `❌ SYSTEM ERROR: ${error.message}`;
+                document.getElementById('main-status').style.color = '#f00';
+                log('portfolio-log', `❌ System startup failed: ${error.message}`, 'error');
+            }
+            
+            // Keyboard shortcuts
+            document.getElementById('symbol-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') getRealTimePrice();
+            });
+            
+            document.getElementById('trade-symbol').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') executeRealBuy();
+            });
+            
+            console.log('✅ Ultimate Agentics System Ready');
+        });
+        
+        // Auto-refresh positions every 30 seconds
+        setInterval(() => {
+            if (systemOnline && ultimatePortfolio) {
+                console.log('🔄 Auto-refreshing positions...');
+                getRealPositions();
+            }
+        }, 30000);
+        
+        console.log('🔥 Ultimate Agentics Loaded - Real wealth building machine active!');
+    </script>
+</body>
+</html>
