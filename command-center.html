@@ -297,18 +297,7 @@
     </header>
 
     <!-- Main Dashboard -->
-    <!-- Live API Testing Panel -->
-<div style="background: rgba(0,255,0,0.1); border: 1px solid #00ff00; padding: 15px; margin: 20px; border-radius: 10px;">
-    <h3 style="color: #00ff00; text-align: center; margin-bottom: 15px;">🔴 LIVE API TESTING</h3>
-    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-        <button onclick="testAPI()" style="background: #00ff00; color: #000; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Test APIs</button>
-        <button onclick="testPrice()" style="background: #ff6b35; color: #fff; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">AAPL Price</button>
-        <button onclick="testAccount()" style="background: #4169e1; color: #fff; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Account Info</button>
-    </div>
-    <div id="api-results" style="background: #333; padding: 10px; border-radius: 5px; margin-top: 10px; min-height: 50px; text-align: center;">Click buttons to test live APIs</div>
-</div>
-
-<div class="dashboard-container">
+    <div class="dashboard-container">
         <!-- System Status -->
         <div class="system-status">
             <div class="status-indicator">
@@ -579,55 +568,4 @@ window.addEventListener('beforeinstallprompt', (e) => {
 <a href="mission-log.html" class="action-btn">
     <span class="action-icon">📜</span>
     <span>Mission Log</span>
-</a>// Simple API Test Functions
-async function testAPI() {
-    const results = document.getElementById("api-results");
-    if (!results) {
-        alert("Results div not found");
-        return;
-    }
-    
-    results.innerHTML = "🔄 Testing...";
-    
-    try {
-        // Simple test without complex dependencies
-        const response = await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=AAPL&apikey=HKPZNZMZFDRL8T8G`);
-        const data = await response.json();
-        
-        if (data['Global Quote']) {
-            results.innerHTML = "✅ API Working - AAPL: $" + data['Global Quote']['05. price'];
-        } else {
-            results.innerHTML = "❌ API Response Error";
-        }
-    } catch (error) {
-        results.innerHTML = "❌ Error: " + error.message;
-    }
-}
-
-async function testPrice() {
-    testAPI(); // Use the same function for simplicity
-}
-
-async function testAccount() {
-    const results = document.getElementById("api-results");
-    results.innerHTML = "🔄 Testing Alpaca...";
-    
-    try {
-        const response = await fetch('https://paper-api.alpaca.markets/v2/account', {
-            headers: {
-                'APCA-API-KEY-ID': 'PK1SMA5HLMLSSGGD1J2F',
-                'APCA-API-SECRET-KEY': 'JedoGXjUB5RgdT3MooxO2y6EcRcda4'
-            }
-        });
-        
-        if (response.ok) {
-            const account = await response.json();
-            results.innerHTML = "✅ Account Connected - Portfolio: $" + parseFloat(account.portfolio_value).toFixed(2);
-        } else {
-            results.innerHTML = "❌ Account connection failed";
-        }
-    } catch (error) {
-        results.innerHTML = "❌ Error: " + error.message;
-    }
-}
-</script>
+</a>
