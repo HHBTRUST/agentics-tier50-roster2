@@ -593,3 +593,62 @@ async function getPrice() {
   }
 }
 </script>
+<div style="background: rgba(65,105,225,0.9); border: 1px solid #4169e1; border-radius: 5px; padding: 10px; width: 150px;">
+  <h4 style="color: #fff; margin: 0 0 8px 0; font-size: 12px;">�� STACK</h4>
+  <button onclick="getAccount()" style="background: #1e90ff; color: #fff; padding: 4px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 10px; width: 100%; margin-bottom: 3px;">Account</button>
+  <button onclick="getPositions()" style="background: #1e90ff; color: #fff; padding: 4px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 10px; width: 100%;">Positions</button>
+  <div id="stack-result" style="color: #fff; font-size: 10px; margin-top: 5px;">Ready</div>
+</div>
+
+<div style="background: rgba(255,20,147,0.9); border: 1px solid #ff1493; border-radius: 5px; padding: 10px; width: 150px;">
+  <h4 style="color: #fff; margin: 0 0 8px 0; font-size: 12px;">🎤 ECHO</h4>
+  <input type="text" id="voice-cmd" placeholder="Apple price" style="width: 100%; padding: 3px; margin-bottom: 5px; font-size: 11px;">
+  <button onclick="processCmd()" style="background: #ff69b4; color: #fff; padding: 4px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 10px; width: 100%;">Process</button>
+  <div id="voice-result" style="color: #fff; font-size: 10px; margin-top: 5px;">Ready</div>
+</div>
+
+async function getAccount() {
+  document.getElementById("stack-result").innerHTML = "Loading...";
+  try {
+    const response = await fetch("https://paper-api.alpaca.markets/v2/account", {
+      headers: {
+        "APCA-API-KEY-ID": "PK1SMA5HLMLSSGGD1J2F",
+        "APCA-API-SECRET-KEY": "JedoGXjUB5RgdT3MooxO2y6EcRcda4"
+      }
+    });
+    const account = await response.json();
+    document.getElementById("stack-result").innerHTML = "$" + parseFloat(account.portfolio_value).toFixed(0);
+  } catch(e) {
+    document.getElementById("stack-result").innerHTML = "Error";
+  }
+}
+
+async function getPositions() {
+  document.getElementById("stack-result").innerHTML = "Loading...";
+  try {
+    const response = await fetch("https://paper-api.alpaca.markets/v2/positions", {
+      headers: {
+        "APCA-API-KEY-ID": "PK1SMA5HLMLSSGGD1J2F",
+        "APCA-API-SECRET-KEY": "JedoGXjUB5RgdT3MooxO2y6EcRcda4"
+      }
+    });
+    const positions = await response.json();
+    document.getElementById("stack-result").innerHTML = positions.length + " pos";
+  } catch(e) {
+    document.getElementById("stack-result").innerHTML = "Error";
+  }
+}
+
+function processCmd() {
+  const cmd = document.getElementById("voice-cmd").value.toLowerCase();
+  if(cmd.includes("apple") || cmd.includes("aapl")) {
+    document.getElementById("sym").value = "AAPL";
+    getPrice();
+    document.getElementById("voice-result").innerHTML = "Getting AAPL";
+  } else if(cmd.includes("account")) {
+    getAccount();
+    document.getElementById("voice-result").innerHTML = "Getting account";
+  } else {
+    document.getElementById("voice-result").innerHTML = "Try: Apple price";
+  }
+}
